@@ -1,0 +1,86 @@
+﻿@model IList<StockItemViewModel>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="~/css/common.css" rel="stylesheet" />
+
+<h3>Stock Item List Informations</h3>
+
+@if (TempData["Msg"] != null && !Convert.ToBoolean(TempData["IsError"]))
+{
+    <div class="alert alert-success" role="alert">
+        <span>@TempData["Msg"]</span>
+    </div>
+}
+else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
+{
+    <div class="alert alert-danger" role="alert">
+        <span>@TempData["Msg"]</span>
+    </div>
+}
+<div class="table-responsive">
+<table class="table table-bordered" id="StockItemTable">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Actions</th>
+            <th scope="col">Stock Group</th>
+            <th scope="col">Stock Code</th>
+            <th scope="col">Description</th>
+            <th scope="col">Barcode</th>
+            <th scope="col">Discount Type</th>
+            <th scope="col">Discount Amount</th>
+            <th scope="col">Discount %</th>
+            <th scope="col">Effective From Date</th>
+            <th scope="col">Effective To Date</th>
+            <th scope="col">Remarks</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Created By</th>
+            <th scope="col">Updated At</th>
+            <th scope="col">Updated By</th>
+        </tr>        
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td scrop="row">@(Model.IndexOf(item)+1)</td>
+
+                <td>
+                        <a href="/StockItem/edit?Id=@item.Id" class="btn update" style="padding:0px 5px 0px 0px;">
+                        <i class="fa fa-pen-to-square"></i>
+                    </a>
+
+                        <a href="/StockItem/delete?Id=@item.Id" class="btn delete" style="padding:0px 5px;" onclick="return confirm('Are you sure to delete this record?')">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </td>
+
+                <td>@item.StockGrpCode</td>
+                <td>@item.Code</td>
+                <td>@item.Description</td>
+                <td>@item.BarCode</td>
+                <td>@item.Disc_Type</td>
+                <td>@item.Disc_Amount</td>
+                <td>@item.Disc_Percent</td>
+                <td>@(item.From_Date.HasValue ? item.From_Date.Value.ToString("yyyy-MM-dd HH:mm:ss tt") : string.Empty)</td>
+                <td>@(item.To_Date.HasValue ? item.To_Date.Value.ToString("yyyy-MM-dd HH:mm:ss tt") : string.Empty)</td>
+                <td>@item.Remarks</td>
+               @*  <td>
+                    <a href="/StockItem/Edit?id=@item.Id" class="btn btn-success" role="button">Edit</a>
+                    <a href="/StockItem/Delete?id=@item.Id" class="btn btn-danger" role="button" onclick="return confirm('Are you sute want to delete this record?')">Delete</a>
+                </td> *@
+                <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss tt")</td>
+                <td>@item.CreatedBy</td>
+                <td>@(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss tt") : string.Empty)</td>
+                <td>@item.UpdatedBy</td>
+            </tr>   
+        }
+    </tbody>
+</table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#StockItemTable').DataTable();
+    });
+</script>

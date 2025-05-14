@@ -1,0 +1,37 @@
+﻿<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<h3>Stock Group Entry Form</h3>
+<form action="/StockGroup/Entry" method="post">
+    <div class="mb-3">
+        <label for="Code" class="form-label">Code</label>
+        <input type="text" class="form-control" name="Code" id="txtCode" placeholder="enter Stock Group Code here." maxlength="20" required>
+    </div>
+    <div class="mb-3">
+        <label for="Description" class="form-label">Description</label>
+        <input type="text" class="form-control" name="Description" id="txtDesc" placeholder="enter Description here.">
+    </div>
+    <div class="mb-3">
+        <label for="Remarks">Remarks</label>
+        <textarea class="form-control" placeholder="enter Remarks here" name="Remarks" id="txtRemarks"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary" id="btnEntry">Entry</button>
+    <a href="List" class="btn btn-danger">Cancel</a>
+</form>
+
+<script>
+    $(document).ready(function(){
+        $("#btnEntry").attr('disabled',true);
+
+        function toggleEntryButton(){
+            if ($("#txtCode").val().length !=0){
+                $("#btnEntry").attr('disabled',false);
+            }
+            else $("#btnEntry").attr('disabled',true);
+        }
+
+        $("#txtCode").keyup(function(){
+            toggleEntryButton();
+        });
+    });
+
+</script>

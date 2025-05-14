@@ -1,0 +1,72 @@
+﻿@model IList<SupplierViewModel>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="~/css/common.css" rel="stylesheet" />
+
+<h3>Suppler List Informations</h3>
+
+@if(TempData["Msg"] != null && !Convert.ToBoolean(TempData["IsError"]))
+{
+    <div class="alert alert-success" role="alert">
+        <span>@TempData["Msg"]</span>
+    </div>
+}
+else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
+{
+    <div class="alert alert-danger" role="alert">
+        <span>@TempData["Msg"]</span>
+    </div>
+}
+
+<div class="table-responsive">
+    <table class="table table-bordered" id="SupplierTable">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Actions</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Address</th>
+                <th scope="col">Remarks</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Updated At</th>
+                <th scope="col">Updated By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model)
+            {
+                <tr>
+                    <td scope="row">@(Model.IndexOf(item)+1)</td>
+                    <td>
+                        <a href="/Supplier/edit?Id=@item.Id" class="btn update" style="padding:0px 5px 0px 0px;">
+                            <i class="fa fa-pen-to-square"></i>
+                        </a>
+
+                        <a href="/Supplier/delete?Id=@item.Id" class="btn delete" style="padding:0px 5px;" onclick="return confirm('Are you sure to delete this record?')">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </td>
+                    <td>@item.Name</td>
+                    <td>@item.Email</td>
+                    <td>@item.Phone</td>
+                    <td>@item.Address</td>
+                    <td>@item.Remarks</td>
+                    <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss tt")</td>
+                    <td>@item.CreatedBy</td>
+                    <td>@(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss tt") : string.Empty)</td>
+                    <td>@item.UpdatedBy</td>
+                </tr>
+            }            
+    </tbody>
+</table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#SupplierTable').DataTable();
+    });
+</script>

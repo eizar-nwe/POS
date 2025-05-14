@@ -1,0 +1,22 @@
+﻿.btn {
+    display: inline-block;
+    text-decoration: none;
+    color: white;
+    border-radius: 4px;
+}
+
+.update {
+    background-color: #17a2b8; /* Blueish */
+}
+
+.update:hover {
+    background-color: #117a8b;
+}
+
+.delete {
+    background-color: #dc3545; /* Red */
+}
+
+.delete:hover {
+    background-color: #bd2130;
+}

@@ -1,0 +1,30 @@
+﻿@model SupplierViewModel
+
+<h3> Supplier Edit Form</h3>
+
+<form action="/supplier/edit" method="post">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="mb-3">
+        <label for="Name" class="form-label">Name</label>
+        <input type="text" class="form-control" name="Name" id="txtName" value="@Model.Name" disabled />
+    </div>
+    <div class="mb-3">
+        <label for="Email" class="form-label">Email</label>
+        <input type="text" class="form-control" name="Email" id="txtEmail" value="@Model.Email" placeholder="enter Email here" />
+    </div>
+    <div class="mb-3">
+        <label for="Phone" class="form-label">Phone</label>
+        <input type="text" class="form-control" name="Phone" id="txtPhone" value="@Model.Phone" placeholder="enter Phone here" />
+    </div>
+    <div class="mb-3">
+        <label for="Address" class="form-label">Address</label>
+        <textarea class="form-control" name="Address" id="txtAddress" placeholder="enter Address here">@Model.Address</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="Remarks" class="form-label">Remarks</label>
+        <textarea class="form-control" name="Remarks" id="txtRemarks" placeholder="enter Remarks here">@Model.Remarks</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="btnEntry">Entry</button>
+    <a href="List" class="btn btn-danger">Cancel</a>
+</form>
