@@ -30,6 +30,10 @@
         <input type="text" class="form-control" name="Description" id="txtDesc" value="@Model.Description" placeholder="enter Description here">
     </div>
     <div class="mb-3">
+        <label for="Sell_Price" class="form-label">Selling Price</label>
+        <input type="number" class="form-control" name="Sell_Price" id="sellPrice" value="@Model.Sell_Price">
+    </div>
+    <div class="mb-3">
         <label for="Barcode" class="form-label">Barcode</label>
         <input type="text" class="form-control" name="Barcode" id="txtBarcode" value="@Model.BarCode" placeholder="enter BarCode here">
     </div>
@@ -76,7 +80,7 @@
         <textarea class="form-control" placeholder="enter Remarks here" name="Remarks" id="txtRemarks">@Model.Remarks</textarea>
     </div>
     <button type="submit" class="btn btn-primary" id="btnEdit">Update</button>
-    <a href="List" class="btn btn-danger">Cancel</a>
+    <a href="List" class="btn btn-secondary">Cancel</a>
 </form>
 
 

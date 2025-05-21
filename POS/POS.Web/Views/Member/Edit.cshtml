@@ -1,13 +1,17 @@
-﻿@model SupplierViewModel
+﻿@model MemberViewModel
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
-<h3>Supplier Edit Form</h3>
+<h3>Member Edit Form</h3>
 
-<form action="/supplier/update" method="post">
+<form action="/member/update" method="post">
     <input type="hidden" name="Id" value="@Model.Id" />
     <div class="mb-3">
         <label for="Name" class="form-label">Name</label>
         <input type="text" class="form-control" name="Name" id="txtName" value="@Model.Name"/>
+    </div>
+    <div class="mb-3">
+        <label for="MemberDate" class="form-label">Member Date</label>
+        <input type="datetime-local" class="form-control" name="MemberDate" id="txtMemberDate" value="@Model.MemberDate.ToString("yyyy-MM-dd HH:mm:ss")" placeholder="enter Member Date here" />
     </div>
     <div class="mb-3">
         <label for="Email" class="form-label">Email</label>

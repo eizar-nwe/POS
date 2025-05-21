@@ -40,7 +40,10 @@ namespace POS.Repositories.Common
         {
             _dbContext.Remove<T>(entity);
         }
-
+        public void DeleteRange(IEnumerable<T> entity)
+        {
+            _dbContext.RemoveRange(entity);            
+        }
         public IEnumerable<T> GetAll(Expression<Func<T, bool>> expression)
         {
             return _dbSet.AsNoTracking().Where(expression).AsEnumerable();

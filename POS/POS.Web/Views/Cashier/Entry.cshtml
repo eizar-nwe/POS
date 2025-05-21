@@ -1,13 +1,26 @@
-﻿@model SupplierViewModel
+﻿@model CashierViewModel
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
-<h3>Supplier Entry Form</h3>
+<h3>Cashier Entry Form</h3>
 
-<form action="/supplier/entry" method="post">
+<form action="/Cashier/entry" method="post">
     <div class="mb-3">
         <label for="Name" class="form-label">Name</label>
         <input type="text" class="form-control" name="Name" id="txtName" placeholder="enter Name here" required />
     </div>
+
+    <div class="mb-3">
+        <label for="Gender" class="form-label">Gender</label>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="Gender" id="GenderF" value="F" checked>
+            <label class="form-check-label" for="GenderF">Female</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="Gender" id="GenderM" value="M">
+            <label class="form-check-label" for="GenderM">Male</label>
+        </div>
+    </div>
+
     <div class="mb-3">
         <label for="Email" class="form-label">Email</label>
         <input type="text" class="form-control" name="Email" id="txtEmail" placeholder="enter Email here" />

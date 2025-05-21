@@ -4,26 +4,26 @@ using POS.Services;
 
 namespace POS.Web.Controllers
 {
-    public class SupplierController : Controller
+    public class CashierController : Controller
     {
-        private readonly ISupplierService _supplierServices;
+        private readonly ICashierService _CashierServices;
 
-        public SupplierController(ISupplierService supplierServices)
+        public CashierController(ICashierService CashierServices)
         {
-            this._supplierServices = supplierServices;
+            this._CashierServices = CashierServices;
         }
-        public IActionResult List() => View(_supplierServices.GetAll().ToList());
+        public IActionResult List() => View(_CashierServices.GetAll().ToList());
         
         public IActionResult Entry()
         {
             return View();
         }
         [HttpPost]
-        public IActionResult Entry(SupplierViewModel supplierVM)
+        public IActionResult Entry(CashierViewModel CashierVM)
         {
             try
             {
-                bool result = _supplierServices.Create(supplierVM);
+                bool result = _CashierServices.Create(CashierVM);
                 if (result)
                 {
                     TempData["Msg"] = "Data has been saved successfully.";
@@ -38,9 +38,8 @@ namespace POS.Web.Controllers
             catch (Exception)
             {
                 TempData["Msg"] = "Error was occured when the record is created.";
-                TempData["IsError"] = true;
+                TempData["IsError"] = true;                                 
             }
-
             return RedirectToAction("List");
         }
         
@@ -48,7 +47,7 @@ namespace POS.Web.Controllers
         {
             try
             {
-                bool result = _supplierServices.Delete(id);
+                bool result = _CashierServices.Delete(id);
                 if (result)
                 {
                     TempData["Msg"] = "Data has been deleted successfully.";
@@ -69,15 +68,15 @@ namespace POS.Web.Controllers
         }
         public IActionResult Edit(string id)
         {
-            SupplierViewModel suprVM = _supplierServices.GetById(id);
+            CashierViewModel suprVM = _CashierServices.GetById(id);
             return View(suprVM);
         }
         [HttpPost]
-        public IActionResult Update(SupplierViewModel supplierVM)
+        public IActionResult Update(CashierViewModel CashierVM)
         {
             try
             {
-                bool result = _supplierServices.Update(supplierVM);
+                bool result = _CashierServices.Update(CashierVM);
                 if (result)
                 {
                     TempData["Msg"] = "Data has been updated successfully.";

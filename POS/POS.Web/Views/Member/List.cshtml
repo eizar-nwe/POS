@@ -1,11 +1,11 @@
-﻿@model IList<SupplierViewModel>
+﻿@model IList<MemberViewModel>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="~/css/common.css" rel="stylesheet" />
 
-<h3>Suppler List</h3>
+<h3>Member List</h3>
 
 @if(TempData["Msg"] != null && !Convert.ToBoolean(TempData["IsError"]))
 {
@@ -21,19 +21,20 @@ else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
 }
 
 <div class="table-responsive">
-    <table class="table table-bordered" id="SupplierTable">
+    <table class="table table-bordered" id="MemberTable">
         <thead>
             <tr>
                 <th scope="col">
-                    <a href="/supplier/entry" class="btn add">
+                    <a href="/StockItem/entry" class="btn add">
                         <i class="fa fa-plus"></i>
                     </a>
                 </th>
                 <th scope="col">Actions</th>
                 <th scope="col">Name</th>
+                <th scope="col">Member Date</th>
                 <th scope="col">Email</th>
                 <th scope="col">Phone</th>
-                <th scope="col">Address</th>
+                <th scope="col">Address</th>                
                 <th scope="col">Remarks</th>
                 <th scope="col">Created At</th>
                 <th scope="col">Created By</th>
@@ -47,15 +48,16 @@ else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
                 <tr>
                     <td scope="row">@(Model.IndexOf(item)+1)</td>
                     <td>
-                        <a href="/Supplier/edit?Id=@item.Id" class="btn update">
+                        <a href="/Member/edit?Id=@item.Id" class="btn update">
                             <i class="fa fa-pen-to-square"></i>
                         </a>
 
-                        <a href="/Supplier/delete?Id=@item.Id" class="btn delete" onclick="return confirm('Are you sure to delete this record?')">
+                        <a href="/Member/delete?Id=@item.Id" class="btn delete" onclick="return confirm('Are you sure to delete this record?')">
                             <i class="fa fa-trash"></i>
                         </a>
                     </td>
                     <td>@item.Name</td>
+                    <td>@item.MemberDate.ToString("yyyy-MM-dd HH:mm:ss tt")</td>
                     <td>@item.Email</td>
                     <td>@item.Phone</td>
                     <td>@item.Address</td>
@@ -72,6 +74,6 @@ else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
 
 <script>
     $(document).ready(function () {
-        $('#SupplierTable').DataTable(); //added css & js reference in shared _Layout
+        $('#MemberTable').DataTable(); //added css & js reference in shared _Layout
     });
 </script>

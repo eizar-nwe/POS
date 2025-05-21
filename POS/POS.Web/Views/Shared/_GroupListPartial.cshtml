@@ -1,0 +1,12 @@
+﻿@model IList<StockGroupViewModel>
+
+<div class="mb-3">
+    <label for="STOCKGRP_ID" class="form-label">Stock Group</label>
+    <select class="form-select" name="STOCKGRP_ID" id="stkgrpId" required>
+        <option selected value="x">[select one]</option>
+        @foreach (var stkgrp in Model)
+        {            
+            <option value="@stkgrp.Id">@stkgrp.Code</option>
+        }
+    </select>
+</div>

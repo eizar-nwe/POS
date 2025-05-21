@@ -21,7 +21,10 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //depedency injection for all of domains
 builder.Services.AddTransient<IStockGroupService, StockGroupService>();
 builder.Services.AddTransient<IStockItemService, StockItemService>();
-builder.Services.AddTransient<ISupplierServices, SupplierService>();
+builder.Services.AddTransient<ISupplierService, SupplierService>();
+builder.Services.AddTransient<IMemberService, MemberService>();
+builder.Services.AddTransient<ICashierService, CashierService>();
+builder.Services.AddTransient<IStockIncomeService, StockIncomeService>();
 
 var app = builder.Build();
 

@@ -19,7 +19,6 @@ namespace POS.Services
         {
             this._unitOfWork = unitOfWork;
         }
-
         private async Task<string> GetIpAsync()
         {
             return await NetworkHelper.GetIpAddressAsnyc();
@@ -34,6 +33,7 @@ namespace POS.Services
                     Code = stockItemVM.Code,
                     Description = stockItemVM.Description,
                     StockGrp_Id = stockItemVM.StockGrp_Id,
+                    Sell_Price = stockItemVM.Sell_Price,
                     BarCode = stockItemVM.BarCode,
                     Disc_Type = stockItemVM.Disc_Type,
                     Disc_Amount = stockItemVM.Disc_Amount,
@@ -56,7 +56,6 @@ namespace POS.Services
                 return false;
             }
         }
-
         public bool Delete(string id)
         {
             try
@@ -79,7 +78,6 @@ namespace POS.Services
 
         public IEnumerable<StockItemViewModel> GetAll()
         {
-
             return (from s in _unitOfWork.StockItemRepository.GetAll(w => w.IsActive)
                     join g in _unitOfWork.StockGroupRepository.GetAll(w => w.IsActive)
                     on s.StockGrp_Id equals g.Id
@@ -90,6 +88,7 @@ namespace POS.Services
                         Code = s.Code,
                         Description = s.Description,
                         StockGrp_Id = s.StockGrp_Id,
+                        Sell_Price = s.Sell_Price,
                         BarCode = s.BarCode,
                         Disc_Type = s.Disc_Type,
                         Disc_Amount = s.Disc_Amount,
@@ -108,28 +107,35 @@ namespace POS.Services
         }
         public StockItemViewModel GetByID(string id)
         {
-            return _unitOfWork.StockItemRepository.GetAll(w=>w.IsActive && w.Id==id).Select(s=> new StockItemViewModel
-            {
-                Id = s.Id,
-                Code = s.Code,
-                Description = s.Description,
-                StockGrp_Id = s.StockGrp_Id,
-                BarCode = s.BarCode,
-                Disc_Type = s.Disc_Type,
-                Disc_Amount = s.Disc_Amount,
-                Disc_Percent = s.Disc_Percent,
-                From_Date = s.From_Date,
-                To_Date = s.To_Date,
-                CreatedAt = s.CreatedAt,
-                CreatedBy = s.CreatedBy,
-                UpdatedAt = s.UpdatedAt,
-                UpdatedBy = s.UpdatedBy,
-                Ip = s.Ip,
-                Remarks = s.Remarks,
-                IsActive=s.IsActive
-            }).FirstOrDefault();
-        }
 
+            return (from s in _unitOfWork.StockItemRepository.GetAll(w => w.IsActive)
+                    join g in _unitOfWork.StockGroupRepository.GetAll(w => w.IsActive)
+                    on s.StockGrp_Id equals g.Id
+                    where s.Id == id
+
+                    select new StockItemViewModel
+                    {
+                        Id = s.Id,
+                        Code = s.Code,
+                        Description = s.Description,
+                        StockGrp_Id = s.StockGrp_Id,
+                        Sell_Price = s.Sell_Price,
+                        BarCode = s.BarCode,
+                        Disc_Type = s.Disc_Type,
+                        Disc_Amount = s.Disc_Amount,
+                        Disc_Percent = s.Disc_Percent,
+                        From_Date = s.From_Date,
+                        To_Date = s.To_Date,
+                        CreatedAt = s.CreatedAt,
+                        CreatedBy = s.CreatedBy,
+                        UpdatedAt = s.UpdatedAt,
+                        UpdatedBy = s.UpdatedBy,
+                        Ip = s.Ip,
+                        Remarks = s.Remarks,
+                        IsActive = s.IsActive,
+                        StockGrpCode = g.Code
+                    }).FirstOrDefault();
+        }       
         public bool Update(StockItemViewModel stockItemVM)
         {
             try
@@ -137,6 +143,7 @@ namespace POS.Services
                 StockItemEntity stockItemEntity = _unitOfWork.StockItemRepository.GetAll(w => w.IsActive && w.Id == stockItemVM.Id).FirstOrDefault();
                 if (stockItemEntity is not null)
                 {
+                    stockItemEntity.Sell_Price = stockItemVM.Sell_Price;                    
                     stockItemEntity.Description = stockItemVM.Description;                    
                     stockItemEntity.BarCode = stockItemVM.BarCode;
                     stockItemEntity.Disc_Type = stockItemVM.Disc_Type;

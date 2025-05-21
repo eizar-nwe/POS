@@ -7,10 +7,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/POS.Web.styles.css" asp-append-version="true" />
-    
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.css" />
 
-    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+    <!--using datatable.net  from CDN -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.css" />
 
 </head>
 <body>
@@ -33,7 +32,7 @@
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" 
-                                style="color:black;"> Stock Group</a>
+                                style="color:black;">Stock Group</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/StockGroup/List" style="color:black;">List</a></li>
                                 <li><a class="dropdown-item" href="/StockGroup/Entry" style="color:black;">Entry</a></li>
@@ -41,7 +40,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                               style="color:black;"> Stock Item</a>
+                               style="color:black;">Stock Item</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/StockItem/List" style="color:black;">List</a></li>
                                 <li><a class="dropdown-item" href="/StockItem/Entry" style="color:black;">Entry</a></li>
@@ -49,10 +48,34 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                               style="color:black;"> Supplier</a>
+                               style="color:black;">Supplier</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/Supplier/List" style="color:black;">List</a></li>
                                 <li><a class="dropdown-item" href="/Supplier/Entry" style="color:black;">Entry</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                               style="color:black;">Member</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/member/List" style="color:black;">List</a></li>
+                                <li><a class="dropdown-item" href="/member/Entry" style="color:black;">Entry</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                               style="color:black;">Cashier</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/Cashier/List" style="color:black;">List</a></li>
+                                <li><a class="dropdown-item" href="/Cashier/Entry" style="color:black;">Entry</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                               style="color:black;">Stock Income</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/stockincome/List" style="color:black;">List</a></li>
+                                <li><a class="dropdown-item" href="/stockincome/Entry" style="color:black;">Entry</a></li>
                             </ul>
                         </li>
 
@@ -71,10 +94,14 @@
         <div class="container">
             &copy; 2025 - POS.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-    </footer>
+    </footer>    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!--using JS Lib datatable.net  from CDN -->
+    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

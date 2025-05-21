@@ -2,19 +2,14 @@
 using POS.Domain.Models.ViewModels;
 using POS.Domain.Utilities;
 using POS.UnitOfWorks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace POS.Services
 {
-    public class SupplierService : ISupplierService
+    public class CashierService : ICashierService
     {        
         private readonly IUnitOfWork _unitOfWork;
 
-        public SupplierService(IUnitOfWork unitOfWork)
+        public CashierService(IUnitOfWork unitOfWork)
         {            
             this._unitOfWork = unitOfWork;
         }
@@ -22,24 +17,25 @@ namespace POS.Services
         {
             return await NetworkHelper.GetIpAddressAsnyc();
         }
-        public bool Create(SupplierViewModel supplierVM)
+        public bool Create(CashierViewModel CashierVM)
         {
             try
             {
-                SupplierEntity supplierEntity = new SupplierEntity()
+                CashierEntity CashierEntity = new CashierEntity()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Name = supplierVM.Name,
-                    Email = supplierVM.Email,
-                    Phone = supplierVM.Phone,
-                    Address = supplierVM.Address,
-                    Remarks = supplierVM.Remarks,
+                    Name = CashierVM.Name,
+                    Email = CashierVM.Email,
+                    Phone = CashierVM.Phone,
+                    Address = CashierVM.Address,
+                    Gender= CashierVM.Gender,
+                    Remarks = CashierVM.Remarks,
                     CreatedAt = DateTime.Now,
                     CreatedBy = "System",
                     IsActive = true,
                     Ip = GetIpAsync().Result
                 };
-                _unitOfWork.SupplierRepository.Create(supplierEntity);
+                _unitOfWork.CashierRepository.Create(CashierEntity);
                 _unitOfWork.Commit();
                 return true;
             }
@@ -48,18 +44,16 @@ namespace POS.Services
                 _unitOfWork.Rollback();
                 return false; 
             }
-
         }
-
         public bool Delete(string id)
         {
             try
             {
-                SupplierEntity suprEntity = _unitOfWork.SupplierRepository.GetAll(w => w.IsActive && w.Id == id).FirstOrDefault();
-                if (suprEntity is not null)
+                CashierEntity cashierEntity = _unitOfWork.CashierRepository.GetAll(w => w.IsActive && w.Id == id).FirstOrDefault();
+                if (cashierEntity is not null)
                 {
-                    suprEntity.IsActive = false;
-                    _unitOfWork.SupplierRepository.Delete(suprEntity);
+                    cashierEntity.IsActive = false;
+                    _unitOfWork.CashierRepository.Delete(cashierEntity);
                     _unitOfWork.Commit();
                 }
                 return true;
@@ -70,16 +64,16 @@ namespace POS.Services
                 return false;                
             }
         }
-
-        public IEnumerable<SupplierViewModel> GetAll()
+        public IEnumerable<CashierViewModel> GetAll()
         {
-            return _unitOfWork.SupplierRepository.GetAll(w => w.IsActive).Select(s => new SupplierViewModel
+            return _unitOfWork.CashierRepository.GetAll(w => w.IsActive).Select(s => new CashierViewModel
             {
                 Id=s.Id,
                 Name=s.Name,
                 Email=s.Email,
                 Phone=s.Phone,
                 Address=s.Address,
+                Gender=s.Gender,
                 Remarks=s.Remarks,
                 Ip = s.Ip,
                 CreatedAt = s.CreatedAt,
@@ -88,16 +82,16 @@ namespace POS.Services
                 UpdatedBy = s.UpdatedBy
             }).OrderByDescending(o=>o.CreatedAt).ToList();
         }
-
-        public SupplierViewModel GetById(string id)
+        public CashierViewModel GetById(string id)
         {
-            return _unitOfWork.SupplierRepository.GetAll(w => w.IsActive && w.Id == id).Select(s => new SupplierViewModel
+            return _unitOfWork.CashierRepository.GetAll(w => w.IsActive && w.Id == id).Select(s => new CashierViewModel
             {
                 Id = s.Id,
                 Name = s.Name,
                 Email = s.Email,
                 Phone = s.Phone,
                 Address = s.Address,
+                Gender=s.Gender,
                 Remarks = s.Remarks,
                 Ip = s.Ip,
                 CreatedAt = s.CreatedAt,
@@ -106,25 +100,25 @@ namespace POS.Services
                 UpdatedBy = s.UpdatedBy
             }).FirstOrDefault();
         }
-
-        public bool Update(SupplierViewModel supplierVM)
+        public bool Update(CashierViewModel CashierVM)
         {
             try
             {
-                SupplierEntity suprEntity = _unitOfWork.SupplierRepository.GetAll(w => w.IsActive && w.Id == supplierVM.Id).FirstOrDefault();
-                if (suprEntity is not null)
+                CashierEntity cashierEntity = _unitOfWork.CashierRepository.GetAll(w => w.IsActive && w.Id == CashierVM.Id).FirstOrDefault();
+                if (cashierEntity is not null)
                 {
-                    suprEntity.Name = supplierVM.Name;
-                    suprEntity.Email = supplierVM.Email;
-                    suprEntity.Phone = supplierVM.Phone;
-                    suprEntity.Address = supplierVM.Address;
-                    suprEntity.Remarks = supplierVM.Remarks;
-                    suprEntity.UpdatedAt = DateTime.Now;
-                    suprEntity.UpdatedBy = "System";
-                    suprEntity.IsActive = true;
-                    suprEntity.Ip = GetIpAsync().Result;
+                    cashierEntity.Name = CashierVM.Name;
+                    cashierEntity.Email = CashierVM.Email;
+                    cashierEntity.Phone = CashierVM.Phone;
+                    cashierEntity.Address = CashierVM.Address;
+                    cashierEntity.Gender = CashierVM.Gender;
+                    cashierEntity.Remarks = CashierVM.Remarks;
+                    cashierEntity.UpdatedAt = DateTime.Now;
+                    cashierEntity.UpdatedBy = "System";
+                    cashierEntity.IsActive = true;
+                    cashierEntity.Ip = GetIpAsync().Result;
 
-                    _unitOfWork.SupplierRepository.Update(suprEntity);
+                    _unitOfWork.CashierRepository.Update(cashierEntity);
                     _unitOfWork.Commit();
                 }
                 return true;

@@ -1,0 +1,407 @@
+﻿@model StockIncomeViewModel
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="~/css/stockincome.css" rel="stylesheet" />
+
+<h3>Stock Income Entry Form</h3>
+
+<div class="mb-3">
+    <input type="hidden" name="Id" id="txtId" value="" />        
+    <input type="hidden" name="LINE_ID" id="txtLINE_ID" value="" />
+</div>    
+
+<div class="mb-3">
+    <label for="SUPPLIER_ID" class="form-label">Supplier</label>
+    <select class="form-select" name="SUPPLIER_ID" id="supplierId" required>
+        <option selected value="x">[select one]</option>
+        @foreach (var supr in Model.SupplierVM)
+        {
+            <option value="@supr.Id">@supr.Name</option>
+        }
+    </select>
+</div>
+@* 
+<div class="mb-3">
+    <label for="STOCKGRP_ID" class="form-label">Stock Group</label>
+    <select class="form-select" name="STOCKGRP_ID" id="stkgrpId" required>
+        <option selected value="x">[select one]</option>
+        @foreach (var stkgrp in Model.StkGrpVM)
+        {
+            <option value="@stkgrp.Id">@stkgrp.Code</option>
+        }
+    </select>
+</div>
+ *@
+<div class="mb-3" id="GroupList">
+    @await Html.PartialAsync("_GroupListPartial", Model.StkGrpVM)
+</div>
+
+<div class="mb-3" id="ItemList">
+    @await Html.PartialAsync("_ItemListPartial", Model.StkItemVM)
+</div>
+
+@* <div class="mb-3">
+    <label for="STOCKITEM_ID" class="form-label">Stock Item</label>
+    <select class="form-select" name="STOCKITEM_ID" id="stkItemId" required>
+        <option selected value="x">[select one]</option>
+        @foreach (var stkItem in Model.StkItemVM)
+        {
+            <option value="@stkItem.Id">@stkItem.Code</option>
+        }
+    </select>
+</div> *@
+
+<div class="mb-3">
+    <label for="PRICE" class="form-label">Price</label>
+    <input type="number" class="form-control" name="PRICE" id="txtPrice" value="0" required>
+</div>
+        
+<div class="mb-3">
+    <label for="QUANTITY" class="form-label">Quantity</label>
+    <input type="number" class="form-control" name="QUANTITY" id="txtQnty" value="0" required>
+</div>
+
+<div class="mb-3">
+    <label for="Remarks" class="form-label">Remarks</label>
+    <textarea class="form-control" name="Remarks" id="txtRemarks" placeholder="enter Remarks here"></textarea>
+</div>
+
+<div class="mb-3">        
+    <button id="btnAddItem" class="btn btn-primary">Add Item</button>
+    <button id="btnDelete" class="btn btn-danger" disabled>Delete</button>
+    <a href="/stockincome/List" class="btn btn-secondary">Cancel</a>
+
+    <button id="btnUpdateItem" class="btn btn-primary" style="display: none;">Update Item</button>
+    <button id="btnCancel" class="btn btn-danger" style="display: none;">Cancel</button>
+</div>
+
+<table id="DetailTable">
+    <thead>
+        <tr>
+            <th scope="col">Supplier</th>
+            <th scope="col">Stock Group</th>
+            <th scope="col">Stock Item</th>            
+            <th scope="col">Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Remarks</th>
+            <th scope="col">Action</th>            
+            <th scope="col" style="display: none;">Line Id</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function ItemPartialLoad(selectedstkGrp,stkItm){
+        $.ajax({
+            url: '@Url.Action("FilterByStkGrp", "_Share")',
+            type: 'GET',
+            data: { stkGrp: selectedstkGrp },
+            success: function (result) {
+                $('#ItemList').html(result);
+                if (stkItm !== null && stkItm !== "") $("#stkItemId").val(stkItm);
+            },
+            error: function () {
+                alert("Failed to load Stock Item.");
+            }
+        });
+    };
+
+    $(document).on('change', '#stkgrpId', function () {
+        var selectedstkGrp = $(this).val();
+        ItemPartialLoad(selectedstkGrp,"");
+    });
+
+    $(document).on('change', '#stkItemId', function () {
+        var selecteditem = $(this).val();
+
+        if (selecteditem != "x")
+        {
+            $.ajax({
+            url: '@Url.Action("FilterByStkItem", "_Share")',
+            type: 'GET',
+            data: { stkItem: selecteditem },
+            success: function (result) {
+                $("#stkgrpId").val(result);
+            },
+            error: function () {
+                alert("Failed to load Stock Group.");
+            }
+            });
+        }
+    });
+
+    //to select table row
+    $(document).ready(function () {
+        $("#DetailTable").on("click", "tr", function () {
+
+            document.getElementById("btnAddItem").style.display = "none";
+            document.getElementById("btnDelete").style.display = "none";
+            $('a.btn-secondary').css('display', 'none');
+
+            document.getElementById("btnUpdateItem").style.display = "inline-block";
+            document.getElementById("btnCancel").style.display = "inline-block";
+
+            $("#DetailTable tr").removeClass("selected");
+
+            $(this).addClass("selected"); // Highlight the clicked row
+
+            // Get cell data
+            var supr = $(this).find("td:eq(0)").attr("data-val");
+            var stkGrp = $(this).find("td:eq(1)").attr("data-val");
+            var stkItm = $(this).find("td:eq(2)").attr("data-val");
+            var price = $(this).find("td:eq(3)").text();
+            var qnty = $(this).find("td:eq(4)").text();
+            var remk = $(this).find("td:eq(5)").text();
+            var line = $(this).find("td:eq(7)").text();
+
+            $("#supplierId").val(supr);
+            $("#stkgrpId").val(stkGrp);            
+            ItemPartialLoad(stkGrp,stkItm); //to assign item list & value            
+            $("#txtPrice").val(price);
+            $("#txtQnty").val(qnty);
+            $("#txtRemarks").val(remk);
+            $("#txtLINE_ID").val(line);
+        });
+    });
+
+    //to cancel for update and change to Add mode
+    $("#btnCancel").click(function () {
+        $("#DetailTable tr").removeClass("selected");
+
+        $("#txtLINE_ID").val("");
+        $("#stkgrpId").val("x");
+        ItemPartialLoad("x",""); //to assign item list        
+        $("#txtPrice").val("0");
+        $("#txtQnty").val("0");
+        $("#txtRemarks").val("");        
+
+        document.getElementById("btnAddItem").style.display = "inline-block";
+        document.getElementById("btnDelete").style.display = "inline-block";
+        $('a.btn-secondary').css('display', 'inline-block');
+
+        document.getElementById("btnUpdateItem").style.display = "none";
+        document.getElementById("btnCancel").style.display = "none";
+    });
+
+    function chkFieldValue() {
+
+        var supr_id = $("#supplierId").val();
+        var grp_id = $("#stkgrpId").val();
+        var item_id = $("#stkItemId").val();
+        var prce = $("#txtPrice").val();
+        var qty = $("#txtQnty").val();
+
+        if (supr_id == 'x') {
+            alert('Supplier cannot be left blank.');
+            return false;
+        }
+        if (grp_id == 'x') {
+            alert('Stock Group cannot be left blank.');
+            return false;
+        }
+        if (item_id == 'x') {
+            alert('Stock Item cannot be left blank.');
+            return false;
+        }
+        if (prce == null || prce == undefined || prce == '') {
+            alert('Price cannot be left blank.');
+            return false;
+        }
+        if (qty == null || qty == undefined || qty == '') {
+            alert('Quantity cannot be left blank.');
+            return false;
+        }
+
+        return true;
+    };
+
+    //to create record
+    $("#btnAddItem").on("click", function (evt) {
+        if (chkFieldValue()) {
+            const url = "/StockIncome/AddItem";
+            var anItem = {};
+            anItem.Id = $("#txtId").val();
+            anItem.SUPPLIER_ID = $("#supplierId").val();
+            anItem.STOCKGRP_ID = $("#stkgrpId").val();
+            anItem.STOCKITEM_ID = $("#stkItemId").val();
+            anItem.PRICE = $("#txtPrice").val();
+            anItem.QUANTITY = $("#txtQnty").val();
+            anItem.Remarks = $("#txtRemarks").val();
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: anItem,
+                success: function (response) {
+                    if (response != null) {
+                        if (response.status) {
+                            // alert(response.message);
+                            refreshData(response.resVal);
+                        }
+                        else {
+                            alert(response.message);
+                        }                        
+
+                        var selectedstkGrp = $("#stkgrpId").val();
+                        ItemPartialLoad(selectedstkGrp,""); //to assign item list
+                    }
+                    else {
+                        alert("Error was occured when the record is created.");
+                    }
+                },
+                failure: function (response) {
+                    alert("Fail : Error was occured when the record is created.");
+                }
+            });
+        }
+    });
+
+    //to Update Record
+    $("#btnUpdateItem").on("click", function (evt) {
+        if (chkFieldValue()) {
+            const url = "/StockIncome/UpdateItem";
+            var anItem = {};
+            anItem.pCaller= "Entry",
+            anItem.Id = $("#txtId").val();
+            anItem.LINE_ID = $("#txtLINE_ID").val();
+            anItem.SUPPLIER_ID = $("#supplierId").val();
+            anItem.STOCKGRP_ID = $("#stkgrpId").val();
+            anItem.STOCKITEM_ID = $("#stkItemId").val();
+            anItem.PRICE = $("#txtPrice").val();
+            anItem.QUANTITY = $("#txtQnty").val();
+            anItem.Remarks = $("#txtRemarks").val();
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: anItem,
+                success: function (response) {
+                    if (response != null) {
+                        alert(response.message);
+                        refreshData(response.resVal);
+                    }
+                    else {
+                        alert("Error was occured when the record is updated.");
+                    }
+
+                    var selectedstkGrp = $("#stkgrpId").val();
+                    ItemPartialLoad(selectedstkGrp,""); //to assign item list
+                },
+                failure: function (response) {
+                    alert("Fail : Error was occured when the record is updated.");
+                }
+            });
+        }
+    });
+
+    //to prepare table row for inserted records
+    function refreshData(retVal) {
+
+        const data = retVal;
+
+        const tbody = document.querySelector("#DetailTable tbody");
+        tbody.innerHTML = "";
+
+        if (data.length !== 0) {
+            $("#txtId").val(data[0].id);
+            $("#btnDelete").attr('disabled', false);
+
+            // Render table rows dynamically
+            data.forEach(user => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                            <td data-field="SUPPLIER_ID" data-val="${user.supplieR_ID}">${user.supplierInfo}</td>
+                            <td data-field="STOCKGRP_ID" data-val="${user.stockgrP_ID}">${user.stkGrpInfo}</td>
+                            <td data-field="STOCKITEM_ID" data-val="${user.stockiteM_ID}">${user.stkItemInfo}</td>
+                            <td data-field="PRICE">${user.price}</td>
+                            <td data-field="QUANTITY">${user.quantity}</td>
+                            <td data-field="Remarks">${user.remarks == null || user.remarks == '' ? '' : user.remarks}</td>                            
+                            <td>
+                                <button class="action-btn delete-btn" onclick="deleteRow(this)"><i class="fa fa-trash"></i></button>
+                            </td>
+                            <td data-field="LINE_ID" style="display: none;">${user.linE_ID}</td>
+                            `;
+
+                tbody.appendChild(row);
+            });
+        } else $("#btnDelete").attr('disabled', true);
+
+        //clear screen fields
+        $("#txtLINE_ID").val("");
+        $("#stkgrpId").val("x");
+        $("#stkItemId").val("x");
+        $("#txtPrice").val("0");
+        $("#txtQnty").val("0");
+        $("#txtRemarks").val("");
+
+        document.getElementById("btnAddItem").style.display = "inline-block";
+        document.getElementById("btnDelete").style.display = "inline-block";
+        $('a.btn-secondary').css('display', 'inline-block');
+
+        document.getElementById("btnUpdateItem").style.display = "none";
+        document.getElementById("btnCancel").style.display = "none";
+
+        document.getElementById("supplierId").disabled = true;
+    };
+
+    //to delete selected record from detail table
+    function deleteRow(btn) {
+        const confirmed = confirm("Are you sure you want to delete this record?");
+        if (confirmed) {
+            var url = "/StockIncome/DeleteItem";
+
+            var curId = $("#txtId").val();            
+
+            const row = $(btn).closest('tr');
+            // Find all <td> with data-id in the row            
+            // const dataCells = row.find('td[data-field]');            
+            // const curline_id = $(dataCells[7]).data('field');
+
+            var curline_id = row.find('td:eq(7)').text();
+
+            var data = {
+                pCaller: "Entry",
+                id: curId,                
+                line_id: curline_id
+            }
+
+            $.get(url, data, function (response) {
+                if (response != null) {
+                    alert(response.message);
+                    refreshData(response.resVal);
+                }
+                else {
+                    alert("Error was occured when the record is deleted.");
+                }
+                var selectedstkGrp = $("#stkgrpId").val();
+                ItemPartialLoad(selectedstkGrp,""); //to assign item list
+            });
+        }
+    };
+
+    //to delete all created records and go to List page
+    $("#btnDelete").click(function () {
+        const confirmed = confirm("Are you sure you want to delete this record?");
+        if (confirmed) {
+            var url = "/StockIncome/DeleteRec";
+            var curId = $("#txtId").val();
+            var data = {
+                id: curId
+            }
+            $.get(url, data, function (response) {
+
+                if (response != null) {
+                    // Redirect using JavaScript
+                    alert(response.message);
+                    window.location.href = response.redirectUrl;
+                } else {
+                    alert("Error was occured when the record is deleted.");
+                }
+            });
+        }
+    });
+
+</script>

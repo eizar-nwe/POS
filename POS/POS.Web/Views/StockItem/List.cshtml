@@ -1,10 +1,11 @@
 ﻿@model IList<StockItemViewModel>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="~/css/common.css" rel="stylesheet" />
 
-<h3>Stock Item List Informations</h3>
+<h3>Stock Item List</h3>
 
 @if (TempData["Msg"] != null && !Convert.ToBoolean(TempData["IsError"]))
 {
@@ -22,17 +23,22 @@ else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
 <table class="table table-bordered" id="StockItemTable">
     <thead>
         <tr>
-            <th scope="col">#</th>
+            <th scope="col">
+                <a href="/StockItem/entry" class="btn add">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </th>
             <th scope="col">Actions</th>
             <th scope="col">Stock Group</th>
             <th scope="col">Stock Code</th>
             <th scope="col">Description</th>
+            <th scope="col">Selling Price</th>
             <th scope="col">Barcode</th>
             <th scope="col">Discount Type</th>
             <th scope="col">Discount Amount</th>
             <th scope="col">Discount %</th>
-            <th scope="col">Effective From Date</th>
-            <th scope="col">Effective To Date</th>
+            <th scope="col">From Date</th>
+            <th scope="col">To Date</th>
             <th scope="col">Remarks</th>
             <th scope="col">Created At</th>
             <th scope="col">Created By</th>
@@ -47,11 +53,11 @@ else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
                 <td scrop="row">@(Model.IndexOf(item)+1)</td>
 
                 <td>
-                        <a href="/StockItem/edit?Id=@item.Id" class="btn update" style="padding:0px 5px 0px 0px;">
+                    <a href="/StockItem/edit?Id=@item.Id" class="btn update">
                         <i class="fa fa-pen-to-square"></i>
                     </a>
 
-                        <a href="/StockItem/delete?Id=@item.Id" class="btn delete" style="padding:0px 5px;" onclick="return confirm('Are you sure to delete this record?')">
+                    <a href="/StockItem/delete?Id=@item.Id" class="btn delete" onclick="return confirm('Are you sure to delete this record?')">
                         <i class="fa fa-trash"></i>
                     </a>
                 </td>
@@ -59,6 +65,7 @@ else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
                 <td>@item.StockGrpCode</td>
                 <td>@item.Code</td>
                 <td>@item.Description</td>
+                <td>@item.Sell_Price</td>
                 <td>@item.BarCode</td>
                 <td>@item.Disc_Type</td>
                 <td>@item.Disc_Amount</td>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace POS.Services
 {
-    public interface ISupplierServices
+    public interface ISupplierService
     {
         bool Create(SupplierViewModel supplierVM);
         IEnumerable<SupplierViewModel> GetAll();

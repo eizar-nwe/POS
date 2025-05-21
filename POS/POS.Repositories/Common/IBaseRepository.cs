@@ -13,8 +13,9 @@ namespace POS.Repositories.Common
         void Create(IList<T> entities);
         IEnumerable<T> GetAll(Expression<Func<T, bool>> expression);
         IEnumerable<T> GetBy(Expression<Func<T, bool>> expression);
-        void Update(T entity);
-        void Delete(T entity);
+        void Update(T entity);            
+        void Delete(T entity);        
         void Delete(T entity, bool isHardDeleted);
+        void DeleteRange(IEnumerable<T> entity);
     }
 }

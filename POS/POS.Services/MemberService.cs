@@ -2,19 +2,14 @@
 using POS.Domain.Models.ViewModels;
 using POS.Domain.Utilities;
 using POS.UnitOfWorks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace POS.Services
 {
-    public class SupplierService : ISupplierService
+    public class MemberService : IMemberService
     {        
         private readonly IUnitOfWork _unitOfWork;
 
-        public SupplierService(IUnitOfWork unitOfWork)
+        public MemberService(IUnitOfWork unitOfWork)
         {            
             this._unitOfWork = unitOfWork;
         }
@@ -22,24 +17,25 @@ namespace POS.Services
         {
             return await NetworkHelper.GetIpAddressAsnyc();
         }
-        public bool Create(SupplierViewModel supplierVM)
+        public bool Create(MemberViewModel memberVM)
         {
             try
             {
-                SupplierEntity supplierEntity = new SupplierEntity()
+                MemberEntity memberEntity = new MemberEntity()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Name = supplierVM.Name,
-                    Email = supplierVM.Email,
-                    Phone = supplierVM.Phone,
-                    Address = supplierVM.Address,
-                    Remarks = supplierVM.Remarks,
+                    Name = memberVM.Name,
+                    Email = memberVM.Email,
+                    Phone = memberVM.Phone,
+                    Address = memberVM.Address,
+                    MemberDate= memberVM.MemberDate,
+                    Remarks = memberVM.Remarks,
                     CreatedAt = DateTime.Now,
                     CreatedBy = "System",
                     IsActive = true,
                     Ip = GetIpAsync().Result
                 };
-                _unitOfWork.SupplierRepository.Create(supplierEntity);
+                _unitOfWork.MemberRepository.Create(memberEntity);
                 _unitOfWork.Commit();
                 return true;
             }
@@ -55,11 +51,11 @@ namespace POS.Services
         {
             try
             {
-                SupplierEntity suprEntity = _unitOfWork.SupplierRepository.GetAll(w => w.IsActive && w.Id == id).FirstOrDefault();
-                if (suprEntity is not null)
+                MemberEntity memEntity = _unitOfWork.MemberRepository.GetAll(w => w.IsActive && w.Id == id).FirstOrDefault();
+                if (memEntity is not null)
                 {
-                    suprEntity.IsActive = false;
-                    _unitOfWork.SupplierRepository.Delete(suprEntity);
+                    memEntity.IsActive = false;
+                    _unitOfWork.MemberRepository.Delete(memEntity);
                     _unitOfWork.Commit();
                 }
                 return true;
@@ -71,15 +67,16 @@ namespace POS.Services
             }
         }
 
-        public IEnumerable<SupplierViewModel> GetAll()
+        public IEnumerable<MemberViewModel> GetAll()
         {
-            return _unitOfWork.SupplierRepository.GetAll(w => w.IsActive).Select(s => new SupplierViewModel
+            return _unitOfWork.MemberRepository.GetAll(w => w.IsActive).Select(s => new MemberViewModel
             {
                 Id=s.Id,
                 Name=s.Name,
                 Email=s.Email,
                 Phone=s.Phone,
                 Address=s.Address,
+                MemberDate=s.MemberDate,
                 Remarks=s.Remarks,
                 Ip = s.Ip,
                 CreatedAt = s.CreatedAt,
@@ -89,15 +86,16 @@ namespace POS.Services
             }).OrderByDescending(o=>o.CreatedAt).ToList();
         }
 
-        public SupplierViewModel GetById(string id)
+        public MemberViewModel GetById(string id)
         {
-            return _unitOfWork.SupplierRepository.GetAll(w => w.IsActive && w.Id == id).Select(s => new SupplierViewModel
+            return _unitOfWork.MemberRepository.GetAll(w => w.IsActive && w.Id == id).Select(s => new MemberViewModel
             {
                 Id = s.Id,
                 Name = s.Name,
                 Email = s.Email,
                 Phone = s.Phone,
                 Address = s.Address,
+                MemberDate=s.MemberDate,
                 Remarks = s.Remarks,
                 Ip = s.Ip,
                 CreatedAt = s.CreatedAt,
@@ -107,24 +105,25 @@ namespace POS.Services
             }).FirstOrDefault();
         }
 
-        public bool Update(SupplierViewModel supplierVM)
+        public bool Update(MemberViewModel memberVM)
         {
             try
             {
-                SupplierEntity suprEntity = _unitOfWork.SupplierRepository.GetAll(w => w.IsActive && w.Id == supplierVM.Id).FirstOrDefault();
-                if (suprEntity is not null)
+                MemberEntity memEntity = _unitOfWork.MemberRepository.GetAll(w => w.IsActive && w.Id == memberVM.Id).FirstOrDefault();
+                if (memEntity is not null)
                 {
-                    suprEntity.Name = supplierVM.Name;
-                    suprEntity.Email = supplierVM.Email;
-                    suprEntity.Phone = supplierVM.Phone;
-                    suprEntity.Address = supplierVM.Address;
-                    suprEntity.Remarks = supplierVM.Remarks;
-                    suprEntity.UpdatedAt = DateTime.Now;
-                    suprEntity.UpdatedBy = "System";
-                    suprEntity.IsActive = true;
-                    suprEntity.Ip = GetIpAsync().Result;
+                    memEntity.Name = memberVM.Name;
+                    memEntity.Email = memberVM.Email;
+                    memEntity.Phone = memberVM.Phone;
+                    memEntity.Address = memberVM.Address;
+                    memEntity.MemberDate = memberVM.MemberDate;
+                    memEntity.Remarks = memberVM.Remarks;
+                    memEntity.UpdatedAt = DateTime.Now;
+                    memEntity.UpdatedBy = "System";
+                    memEntity.IsActive = true;
+                    memEntity.Ip = GetIpAsync().Result;
 
-                    _unitOfWork.SupplierRepository.Update(suprEntity);
+                    _unitOfWork.MemberRepository.Update(memEntity);
                     _unitOfWork.Commit();
                 }
                 return true;

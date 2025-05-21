@@ -10,6 +10,7 @@ namespace POS.Domain.Models.DataModels
         public required string Code { get; set; }
         public string? Description { get; set; }
         public required string StockGrp_Id { get; set; }
+        public decimal? Sell_Price { get; set; }
         [MaxLength(20)]
         public string? BarCode { get; set; }
         [MaxLength(1)]

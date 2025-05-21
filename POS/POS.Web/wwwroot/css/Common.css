@@ -5,16 +5,27 @@
     border-radius: 4px;
 }
 
+.add {
+    background-color: #0d6efd; /* Blueish */
+    padding: 0px 5px 0px 5px;
+}
+
+.add:hover {
+    background-color: #0f4da9;
+}
+
 .update {
     background-color: #17a2b8; /* Blueish */
+    padding: 0px 10px 0px 0px;
 }
 
 .update:hover {
-    background-color: #117a8b;
+    background-color: #117a8b;    
 }
 
 .delete {
     background-color: #dc3545; /* Red */
+    padding: 0px 5px;
 }
 
 .delete:hover {

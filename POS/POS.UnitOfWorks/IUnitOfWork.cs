@@ -15,5 +15,8 @@ namespace POS.UnitOfWorks
         IStockGroupRepository StockGroupRepository { get; }
         IStockItemRepository StockItemRepository { get; }
         ISupplierRepository SupplierRepository { get; }
+        IMemberRepository MemberRepository { get; }
+        ICashierRepository CashierRepository { get; }
+        IStockIncomeRepository StockIncomeRepository { get; }
     }
 }

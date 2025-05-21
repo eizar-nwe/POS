@@ -1,12 +1,16 @@
-﻿@model SupplierViewModel
+﻿@model MemberViewModel
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
-<h3>Supplier Entry Form</h3>
+<h3>Member Entry Form</h3>
 
-<form action="/supplier/entry" method="post">
+<form action="/Member/entry" method="post">
     <div class="mb-3">
         <label for="Name" class="form-label">Name</label>
         <input type="text" class="form-control" name="Name" id="txtName" placeholder="enter Name here" required />
+    </div>
+    <div class="mb-3">
+        <label for="MemberDate" class="form-label">Member Date</label>
+        <input type="datetime-local" class="form-control" name="MemberDate" id="txtMemberDate" placeholder="enter Member Date here" required />
     </div>
     <div class="mb-3">
         <label for="Email" class="form-label">Email</label>

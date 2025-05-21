@@ -1,14 +1,27 @@
-﻿@model SupplierViewModel
+﻿@model CashierViewModel
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
-<h3>Supplier Edit Form</h3>
+<h3>Cashier Edit Form</h3>
 
-<form action="/supplier/update" method="post">
+<form action="/Cashier/update" method="post">
     <input type="hidden" name="Id" value="@Model.Id" />
     <div class="mb-3">
         <label for="Name" class="form-label">Name</label>
         <input type="text" class="form-control" name="Name" id="txtName" value="@Model.Name"/>
     </div>
+
+    <div class="mb-3">
+        <label for="Gender" class="form-label">Gender</label>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="Gender" id="GenderF" value="F" @(Model.Gender == "F" ? "checked" : "null")>
+            <label class="form-check-label" for="GenderF">Female</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="Gender" id="GenderM" value="M" @(Model.Gender == "M" ? "checked" : "null")>
+            <label class="form-check-label" for="GenderM">Male</label>
+        </div>
+    </div>
+
     <div class="mb-3">
         <label for="Email" class="form-label">Email</label>
         <input type="text" class="form-control" name="Email" id="txtEmail" value="@Model.Email" placeholder="enter Email here" />
