@@ -1,80 +1,104 @@
 ﻿@model StockItemViewModel
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/js/stockitem.js"></script>
+<script src="~/js/common.js"></script>
 
 <h3>Stock Item Entry Form</h3>
 <form action="/StockItem/Entry" method="post">
-    <div class="mb-3">
-        <label for="StockGrp_Id" class="form-label">Stock Group</label>
-        <select class="form-select" name="StockGrp_Id" id="stkgrpId" required>
-            <option selected value="x">[select one]</option>
-            @foreach(var stkgrp in Model.StockGrpVMs)
-            {
-                <option value="@stkgrp.Id">@stkgrp.Code</option>
-            }
-        </select>
+    
+    <div class="row-side">
+        <div class="col-side">
+            <label for="StockGrp_Id" class="form-label">Stock Group</label>
+            <select class="form-select" name="StockGrp_Id" id="stkgrpId" required>
+                <option selected value="x">[select one]</option>
+                @foreach (var stkgrp in Model.StockGrpVMs)
+                {
+                    <option value="@stkgrp.Id">@stkgrp.Code</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-side">
+            <label for="Code" class="form-label">Stock Code</label>
+            <input type="text" class="form-control" name="Code" id="txtCode" placeholder="enter Stock Code here." maxlength="20" required>
+        </div>        
     </div>
-    <div class="mb-3">
-        <label for="Code" class="form-label">Stock Code</label>
-        <input type="text" class="form-control" name="Code" id="txtCode" placeholder="enter Stock Code here." maxlength="20" required>
+
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Description" class="form-label">Description</label>
+            <input type="text" class="form-control" name="Description" id="txtDesc" placeholder="enter Description here.">
+        </div>
+        <div class="col-side">
+            <label for="Barcode" class="form-label">Barcode</label>
+            <input type="text" class="form-control" name="Barcode" id="txtBarcode" placeholder="enter Barcode here.">
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="Description" class="form-label">Description</label>
-        <input type="text" class="form-control" name="Description" id="txtDesc" placeholder="enter Description here.">
+    
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Sell_Price" class="form-label">Selling Price</label>
+            <input type="number" class="form-control" name="Sell_Price" id="sellPrice" value="0">
+        </div>
+        <div class="col-side">
+            <label for="Offer_price" class="form-label">Offer Price</label>
+            <input type="number" class="form-control" name="Offer_price" id="txtOffPrice" value="0" readonly>
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="Sell_Price" class="form-label">Selling Price</label>
-        <input type="number" class="form-control" name="Sell_Price" id="sellPrice" value="0">
-    </div>
-    <div class="mb-3">
-        <label for="Barcode" class="form-label">Barcode</label>
-        <input type="text" class="form-control" name="Barcode" id="txtBarcode" placeholder="enter Barcode here.">
-    </div>
-    @* <div class="mb-3">
+
+    @* <div class="col-side">
         <label for="Disc_Type" class="form-label">Discount Type</label>
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="Disc_Type" id="radioAmt" value="A" onclick="EnableField()" checked>
+            <input class="form-check-input" type="radio" name="Disc_Type" id="radioAmt" value="A" onclick="DiscTypeOnChange()" checked>
             <label class="form-check-label" for="radioAmt">Amount</label>
         </div>
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="Disc_Type" id="radioPer" value="P" onclick="EnableField()">
+            <input class="form-check-input" type="radio" name="Disc_Type" id="radioPer" value="P" onclick="DiscTypeOnChange()">
             <label class="form-check-label" for="radioPer">Percent</label>
         </div>
     </div> *@
-
-    <div class="mb-3">
-        <label for="Disc_Type" class="form-label">Discount Type</label>
-        <select class="form-select" name="Disc_Type" id="DiscType" onchange="EnableField(this)">
-            <option selected value="">[select one]</option>
-            <option value="A">Amount</option>
-            <option value="P">Percent</option>
-        </select>
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Disc_Type" class="form-label">Discount Type</label>
+            <select class="form-select" name="Disc_Type" id="DiscType" onchange="DiscTypeOnChange(this)">
+                <option selected value="">[select one]</option>
+                <option value="A">Amount</option>
+                <option value="P">Percent</option>
+            </select>
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label for="Disc_Amount" class="form-label">Discount Amount</label>
-        <input type="number" class="form-control" name="Disc_Amount" id="DiscAmt" placeholder="enter Discount Amount here" disabled>
-    </div>
-    <div class="mb-3">
-        <label for="Disc_Percent" class="form-label">Discount Percent</label>
-        <input type="number" class="form-control" name="Disc_Percent" id="DiscPer" placeholder="enter Discount Percent here" disabled>
-    </div>
-    <div class="mb-3">
-        <label for="From_Date" class="form-label">Effective From Date</label>
-        <input type="datetime-local" class="form-control" name="From_Date" id="txtFrom_Date">
-    </div>
-    <div class="mb-3">
-        <label for="To_Date" class="form-label">Effective To Date</label>
-        <input type="datetime-local" class="form-control" name="To_Date" id="txtTo_Date">
-    </div>
-    <div class="mb-3">
-        <label for="Remarks">Remarks</label>
-        <textarea class="form-control" placeholder="enter Remarks here" name="Remarks" id="txtRemarks"></textarea>
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Disc_Amount" class="form-label">Discount Amount</label>
+            <input type="number" class="form-control" name="Disc_Amount" id="DiscAmt" value="0" readonly>
+        </div>
+        <div class="col-side">
+            <label for="Disc_Percent" class="form-label">Discount Percent</label>
+            <input type="number" class="form-control" name="Disc_Percent" id="DiscPer" value="0" readonly>
+        </div>
     </div>
 
-    <button type="submit" class="btn btn-primary" id="btnEntry">Entry</button>
-    <a href="List" class="btn btn-secondary">Cancel</a>
+    <div class="row-side">
+        <div class="col-side">
+            <label for="From_Date" class="form-label">Effective From Date</label>
+            <input type="datetime-local" class="form-control" name="From_Date" id="txtFrom_Date" readonly>
+        </div>
+        <div class="col-side">
+            <label for="To_Date" class="form-label">Effective To Date</label>
+            <input type="datetime-local" class="form-control" name="To_Date" id="txtTo_Date" readonly>
+        </div>
+    </div>
+
+    <div class="row-bottom">
+        <div class="col-side">
+            <label for="Remarks" class="form-label">Remarks</label>
+            <textarea class="form-control" placeholder="enter Remarks here" name="Remarks" id="txtRemarks"></textarea>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-add" id="btnEntry">Entry</button>
+    <a href="List" class="btn btn-secondary">Cancel</a>  
 </form>
 
 <script>
@@ -97,5 +121,10 @@
         $('#stkgrpId').on('change', function () {
             toogleEntryButton();
         });
+
+        $('#DiscAmt, #DiscPer, #sellPrice').on('change', function () {
+            calculateOfferPrice();
+        });
     });
+
 </script>

@@ -4,32 +4,40 @@
 <h3>Member Entry Form</h3>
 
 <form action="/Member/entry" method="post">
-    <div class="mb-3">
-        <label for="Name" class="form-label">Name</label>
-        <input type="text" class="form-control" name="Name" id="txtName" placeholder="enter Name here" required />
-    </div>
-    <div class="mb-3">
-        <label for="MemberDate" class="form-label">Member Date</label>
-        <input type="datetime-local" class="form-control" name="MemberDate" id="txtMemberDate" placeholder="enter Member Date here" required />
-    </div>
-    <div class="mb-3">
-        <label for="Email" class="form-label">Email</label>
-        <input type="text" class="form-control" name="Email" id="txtEmail" placeholder="enter Email here" />
-    </div>
-    <div class="mb-3">
-        <label for="Phone" class="form-label">Phone</label>
-        <input type="text" class="form-control" name="Phone" id="txtPhone" placeholder="enter Phone here" />
-    </div>
-    <div class="mb-3">
-        <label for="Address" class="form-label">Address</label>
-        <textarea class="form-control" name="Address" id="txtAddress" placeholder="enter Address here"></textarea>
-    </div>
-    <div class="mb-3">
-        <label for="Remarks" class="form-label">Remarks</label>
-        <textarea class="form-control" name="Remarks" id="txtRemarks" placeholder="enter Remarks here"></textarea>
-    </div>
 
-    <button type="submit" class="btn btn-primary" id="btnEntry">Entry</button>
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Name" class="form-label">Name</label>
+            <input type="text" class="form-control" name="Name" id="txtName" placeholder="enter Name here" required />
+        </div>
+        <div class="col-side">
+            <label for="MemberDate" class="form-label">Member Date</label>
+            <input type="datetime-local" class="form-control" name="MemberDate" id="txtMemberDate" placeholder="enter Member Date here" required />
+        </div>
+    </div>
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Email" class="form-label">Email</label>
+            <input type="text" class="form-control" name="Email" id="txtEmail" placeholder="enter Email here" />
+        </div>
+        <div class="col-side">
+            <label for="Phone" class="form-label">Phone</label>
+            <input type="text" class="form-control" name="Phone" id="txtPhone" placeholder="enter Phone here" />
+        </div>
+    </div>
+    <div class="row-bottom">
+        <div class="col-side">
+            <label for="Address" class="form-label">Address</label>
+            <textarea class="form-control" name="Address" id="txtAddress" placeholder="enter Address here"></textarea>
+        </div>
+    </div>
+    <div class="row-bottom">
+        <div class="col-side">
+            <label for="Remarks" class="form-label">Remarks</label>
+            <textarea class="form-control" name="Remarks" id="txtRemarks" placeholder="enter Remarks here"></textarea>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-add" id="btnEntry">Entry</button>
     <a href="List" class="btn btn-secondary">Cancel</a>
 </form>
 

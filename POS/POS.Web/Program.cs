@@ -25,6 +25,9 @@ builder.Services.AddTransient<ISupplierService, SupplierService>();
 builder.Services.AddTransient<IMemberService, MemberService>();
 builder.Services.AddTransient<ICashierService, CashierService>();
 builder.Services.AddTransient<IStockIncomeService, StockIncomeService>();
+builder.Services.AddTransient<IMemberDiscountService, MemberDiscountService>();
+builder.Services.AddTransient<ISaleOrderHaderService, SaleOrderHaderService>();
+builder.Services.AddTransient<ISaleOrderDetailService, SaleOrderDetailService>();
 
 var app = builder.Build();
 

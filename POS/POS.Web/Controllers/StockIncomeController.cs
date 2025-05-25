@@ -28,10 +28,10 @@ namespace POS.Web.Controllers
             };            
             return View(stkIncomeVM);
         }
-        public IActionResult Edit(string id, string suprId, string grpId, string itemId)
+        public IActionResult Edit(string id, int line_id)
         {
             StockIncomeViewModel stkIncomeVM = _stockIncomeService.GetAll()
-                .FirstOrDefault(s => s.IsActive && s.Id == id && s.SUPPLIER_ID== suprId && s.STOCKGRP_ID== grpId && s.STOCKITEM_ID== itemId);
+                .FirstOrDefault(s => s.IsActive && s.Id == id && s.LINE_ID== line_id);
 
             stkIncomeVM.StkGrpVM = _stockGroupService.GetAll().ToList();
             stkIncomeVM.StkItemVM = _stockItemService.GetAll().ToList();

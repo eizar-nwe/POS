@@ -34,6 +34,7 @@ namespace POS.Services
                     Description = stockItemVM.Description,
                     StockGrp_Id = stockItemVM.StockGrp_Id,
                     Sell_Price = stockItemVM.Sell_Price,
+                    Offer_price = stockItemVM.Offer_price,
                     BarCode = stockItemVM.BarCode,
                     Disc_Type = stockItemVM.Disc_Type,
                     Disc_Amount = stockItemVM.Disc_Amount,
@@ -89,6 +90,7 @@ namespace POS.Services
                         Description = s.Description,
                         StockGrp_Id = s.StockGrp_Id,
                         Sell_Price = s.Sell_Price,
+                        Offer_price = s.Offer_price,
                         BarCode = s.BarCode,
                         Disc_Type = s.Disc_Type,
                         Disc_Amount = s.Disc_Amount,
@@ -120,6 +122,7 @@ namespace POS.Services
                         Description = s.Description,
                         StockGrp_Id = s.StockGrp_Id,
                         Sell_Price = s.Sell_Price,
+                        Offer_price = s.Offer_price,
                         BarCode = s.BarCode,
                         Disc_Type = s.Disc_Type,
                         Disc_Amount = s.Disc_Amount,
@@ -144,6 +147,7 @@ namespace POS.Services
                 if (stockItemEntity is not null)
                 {
                     stockItemEntity.Sell_Price = stockItemVM.Sell_Price;                    
+                    stockItemEntity.Offer_price = stockItemVM.Offer_price;                    
                     stockItemEntity.Description = stockItemVM.Description;                    
                     stockItemEntity.BarCode = stockItemVM.BarCode;
                     stockItemEntity.Disc_Type = stockItemVM.Disc_Type;

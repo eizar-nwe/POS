@@ -3,7 +3,6 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="~/css/common.css" rel="stylesheet" />
 
 <h3>Stock Income List</h3>
 
@@ -33,7 +32,7 @@
                 <th scope="col">Created At</th>
                 <th scope="col">Created By</th>
                 <th scope="col">Updated At</th>
-                <th scope="col">Updated By</th>
+                <th scope="col">Updated By</th>                
             </tr>
         </thead>
         <tbody>
@@ -42,11 +41,11 @@
                 <tr>
                     <td scope="row">@(Model.IndexOf(item)+1)</td>
                     <td>
-                        <a href="/StockIncome/edit?id=@item.Id&suprId=@item.SUPPLIER_ID&grpId=@item.STOCKGRP_ID&itemId=@item.STOCKITEM_ID" class="btn update">
+                        <a href="/StockIncome/edit?id=@item.Id&line_id=@item.LINE_ID" class="btn update">
                             <i class="fa fa-pen-to-square"></i>
                         </a>
-
-                        <a href="/StockIncome/DeleteItem?pCaller=List&id=@item.Id&suprId=@item.SUPPLIER_ID&grpId=@item.STOCKGRP_ID&itemId=@item.STOCKITEM_ID" class="btn delete" onclick="return confirm('Are you sure to delete this record?')">
+                        ||
+                        <a href="/StockIncome/DeleteItem?pCaller=List&id=@item.Id&line_id=@item.LINE_ID" class="btn delete" onclick="return confirm('Are you sure to delete this record?')">
                             <i class="fa fa-trash"></i>
                         </a>
                     </td>
@@ -59,7 +58,7 @@
                     <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss tt")</td>
                     <td>@item.CreatedBy</td>
                     <td>@(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss tt") : string.Empty)</td>
-                    <td>@item.UpdatedBy</td>
+                    <td>@item.UpdatedBy</td>                    
                 </tr>
             }
     </tbody>

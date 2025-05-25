@@ -5,32 +5,40 @@
 
 <form action="/member/update" method="post">
     <input type="hidden" name="Id" value="@Model.Id" />
-    <div class="mb-3">
-        <label for="Name" class="form-label">Name</label>
-        <input type="text" class="form-control" name="Name" id="txtName" value="@Model.Name"/>
-    </div>
-    <div class="mb-3">
-        <label for="MemberDate" class="form-label">Member Date</label>
-        <input type="datetime-local" class="form-control" name="MemberDate" id="txtMemberDate" value="@Model.MemberDate.ToString("yyyy-MM-dd HH:mm:ss")" placeholder="enter Member Date here" />
-    </div>
-    <div class="mb-3">
-        <label for="Email" class="form-label">Email</label>
-        <input type="text" class="form-control" name="Email" id="txtEmail" value="@Model.Email" placeholder="enter Email here" />
-    </div>
-    <div class="mb-3">
-        <label for="Phone" class="form-label">Phone</label>
-        <input type="text" class="form-control" name="Phone" id="txtPhone" value="@Model.Phone" placeholder="enter Phone here" />
-    </div>
-    <div class="mb-3">
-        <label for="Address" class="form-label">Address</label>
-        <textarea class="form-control" name="Address" id="txtAddress" placeholder="enter Address here">@Model.Address</textarea>
-    </div>
-    <div class="mb-3">
-        <label for="Remarks" class="form-label">Remarks</label>
-        <textarea class="form-control" name="Remarks" id="txtRemarks" placeholder="enter Remarks here">@Model.Remarks</textarea>
-    </div>
 
-    <button type="submit" class="btn btn-primary" id="btnEdit">Update</button>
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Name" class="form-label">Name</label>
+            <input type="text" class="form-control" name="Name" id="txtName" value="@Model.Name"/>
+        </div>
+        <div class="col-side">
+            <label for="MemberDate" class="form-label">Member Date</label>
+            <input type="datetime-local" class="form-control" name="MemberDate" id="txtMemberDate" value="@Model.MemberDate.ToString("yyyy-MM-dd HH:mm:ss")" placeholder="enter Member Date here" />
+        </div>
+    </div>
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Email" class="form-label">Email</label>
+            <input type="text" class="form-control" name="Email" id="txtEmail" value="@Model.Email" placeholder="enter Email here" />
+        </div>
+        <div class="col-side">
+            <label for="Phone" class="form-label">Phone</label>
+            <input type="text" class="form-control" name="Phone" id="txtPhone" value="@Model.Phone" placeholder="enter Phone here" />
+        </div>
+    </div>
+    <div class="row-bottom">
+        <div class="col-side">
+            <label for="Address" class="form-label">Address</label>
+            <textarea class="form-control" name="Address" id="txtAddress" placeholder="enter Address here">@Model.Address</textarea>
+        </div>
+    </div>
+    <div class="row-bottom">
+        <div class="col-side">
+            <label for="Remarks" class="form-label">Remarks</label>
+            <textarea class="form-control" name="Remarks" id="txtRemarks" placeholder="enter Remarks here">@Model.Remarks</textarea>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-update" id="btnEdit">Update</button>
     <a href="List" class="btn btn-secondary">Cancel</a>
 </form>
 <script>

@@ -3,7 +3,6 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="~/css/common.css" rel="stylesheet" />
 
 <h3>Cashier List</h3>
 
@@ -51,7 +50,7 @@ else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
                         <a href="/Cashier/edit?Id=@item.Id" class="btn update">
                             <i class="fa fa-pen-to-square"></i>
                         </a>
-
+                        ||
                         <a href="/Cashier/delete?Id=@item.Id" class="btn delete" onclick="return confirm('Are you sure to delete this record?')">
                             <i class="fa fa-trash"></i>
                         </a>

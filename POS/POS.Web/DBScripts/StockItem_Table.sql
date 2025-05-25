@@ -4,6 +4,7 @@ CREATE TABLE STOCKITEM(
 	Description NVARCHAR(255),
 	StockGrp_Id CHAR(36) NOT NULL,
 	Sell_Price	NUMERIC(18,2) NULL,
+	Offer_price NUMERIC(18,2) NULL,
 	BarCode NVARCHAR(20),
 	Disc_Type NVARCHAR(1),
 	Disc_Amount NUMERIC(18,2),

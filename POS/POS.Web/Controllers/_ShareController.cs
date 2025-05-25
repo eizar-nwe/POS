@@ -28,27 +28,27 @@ namespace POS.Web.Controllers
             else return PartialView("_ItemListPartial", allStkItem);
         }
         [HttpGet]
-        public string FilterByStkItem(string stkItem)
-        {
-            //var allStkGrp = _stockGroupService.GetAll().ToList();
-
+        public IActionResult FilterByStkItem(string stkItem)
+        {            
             var allStkItem = _stockItemService.GetAll().ToList();
-            string GrpIds = allStkItem.Where(p => p.Id == stkItem)
-                .Select(s => s.StockGrp_Id).FirstOrDefault();
+            string GrpId = allStkItem.Where(p => p.Id == stkItem)
+                .Select(s => s.StockGrp_Id).FirstOrDefault() ?? "";
 
-            return GrpIds;
+            decimal sPrice = 0;
+            if (!string.IsNullOrEmpty(GrpId))
+            {
+                sPrice = allStkItem
+                .Where(p => p.StockGrp_Id == GrpId && p.Id == stkItem)
+                .Select(s => s.Sell_Price)
+                .FirstOrDefault() ?? 0m;
+            }            
 
-            //if (stkItem != "x")
-            //{
-            //    var allStkItem = _stockItemService.GetAll().ToList();                
-            //    var GrpIds = allStkItem.Where(p => p.Id == stkItem)
-            //        .Select(s => s.StockGrp_Id).Distinct().ToList();
-                
-                //var filteredGrp = allStkGrp.Where(p => GrpIds.Contains(p.Id)).ToList();
-
-                //return PartialView("_GroupListPartial", filteredGrp);
-            //}            
-            //else return PartialView("_GroupListPartial", allStkGrp);
+            var retSuccess = new
+            {
+                Price = sPrice,
+                StkGrpId = GrpId
+            };
+            return Json(retSuccess);
         }
 
     }

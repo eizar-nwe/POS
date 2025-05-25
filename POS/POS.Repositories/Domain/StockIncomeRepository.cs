@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using POS.Domain.DAO;
 using POS.Domain.Models.DataModels;
-using POS.Domain.Models.ViewModels;
-using POS.Domain.Utilities;
 using POS.Repositories.Common;
 
 namespace POS.Repositories.Domain

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace POS.Domain.Models.ViewModels
 {
@@ -14,7 +10,6 @@ namespace POS.Domain.Models.ViewModels
         public string SUPPLIER_ID { get; set; }
         public decimal PRICE { get; set; }
         public decimal QUANTITY { get; set; }
-
         public string StkGrpInfo { get; set; }
         public string StkItemInfo { get; set; }
         public string SupplierInfo { get; set; }

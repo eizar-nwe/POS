@@ -1,0 +1,97 @@
+﻿@model SaleOrderViewModel
+     
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<h3>Order Entry</h3>
+
+<div class="row-side">
+    <div class="col-side">
+        <label for="CASHIER_ID" class="form-label">Cashier</label>
+        <input type="text" class="form-control" name="CASHIER_ID" id="txtCashier" value="1a26209d-68e0-4d78-9254-9cd93bb0e2ee" readonly>
+    </div>
+        <div class="col-side">
+        <label for="TRNS_DATE" class="form-label">Transaction Date</label>
+        <input type="text" class="form-control" name="TRNS_DATE" id="txtDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" readonly>
+    </div>
+    <div class="col-side">
+
+        <label for="IsMEMBER" class="form-label">Is Member?</label>
+        <select class="form-select" name="IsMEMBER" id="txtIsMEMBER">            
+            <option value="N" selected>No</option>
+            <option value="Y">Yes</option>
+        </select>        
+    </div>
+    <div class="col-side">
+
+        <label for="IsMEMBER" class="form-label">Is Member Test?</label>
+        <select class="form-select" name="IsMEMBER" id="txtIsMEMBER">
+            <option value="N" selected>No</option>
+            <option value="Y">Yes</option>
+        </select>
+    </div>
+</div>
+
+<!-- Member Browse -->
+<label for="MEMBER_ID" class="form-label">Member</label>
+<div style="width:49%;display: flex; align-items: center; gap: 8px;">    
+    <input type="text" class="form-control" id="txtMemberName" readonly />
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#browseModal">...</button>    
+</div>
+<input type="hidden" name="MEMBER_ID" id="txtMemberId" />
+
+<!-- Browse Modal -->
+<div class="modal fade" id="browseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Select Product</h5></div>
+            <div class="modal-body">
+                <input type="text" id="searchBox" class="form-control mb-2" placeholder="Search products...">
+                <table class="table table-bordered" id="browseTable">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Member Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="memberList">
+                        @foreach (var member in Model.MemberVM)
+                        {
+                            <tr>
+                                <td>@member.Id</td>
+                                <td>@member.Name</td>
+                                <td>@member.MemberDate.ToString("yyyy-MM-dd HH:mm:ss tt")</td>
+                                <td><button class="btn btn-sm btn-success select-btn" data-id="@member.Id" data-name="@member.Name">Select</button></td>
+                            </tr>
+                        }                                             
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End of Member Browse -->
+
+
+
+<script>
+    // Filter rows as you type
+    $('#searchBox').on('keyup', function () {
+      const value = $(this).val().toLowerCase();
+      $('#memberList tr').filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        //$(this).toggle($(this).find("td:eq(0)").text().toLowerCase().indexOf(value) > -1);
+      });
+    });
+
+    // Select button returns data to input
+    $(document).on('click', '.select-btn', function () {
+      const name = $(this).data('name');
+      const id = $(this).data('id');
+      $('#txtMemberName').val(name);
+      $('#txtMemberId').val(id);
+      $('#browseModal').modal('hide'); // closes modal
+    });
+</script>

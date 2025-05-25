@@ -6,6 +6,7 @@
         public string? Description { get; set; }
         public string StockGrp_Id { get; set; }
         public decimal? Sell_Price { get; set; }
+        public decimal? Offer_price { get; set; }
         public string? BarCode { get; set; }
         public string? Disc_Type { get; set; }
         public decimal? Disc_Amount { get; set; }

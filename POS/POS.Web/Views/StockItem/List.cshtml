@@ -3,7 +3,6 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="~/css/common.css" rel="stylesheet" />
 
 <h3>Stock Item List</h3>
 
@@ -20,43 +19,44 @@ else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
     </div>
 }
 <div class="table-responsive">
-<table class="table table-bordered" id="StockItemTable">
+    <table class="table table-bordered" id="StockItemTable">
     <thead>
         <tr>
-            <th scope="col">
+            <th>
                 <a href="/StockItem/entry" class="btn add">
                     <i class="fa fa-plus"></i>
                 </a>
             </th>
-            <th scope="col">Actions</th>
-            <th scope="col">Stock Group</th>
-            <th scope="col">Stock Code</th>
-            <th scope="col">Description</th>
-            <th scope="col">Selling Price</th>
-            <th scope="col">Barcode</th>
-            <th scope="col">Discount Type</th>
-            <th scope="col">Discount Amount</th>
-            <th scope="col">Discount %</th>
-            <th scope="col">From Date</th>
-            <th scope="col">To Date</th>
-            <th scope="col">Remarks</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Created By</th>
-            <th scope="col">Updated At</th>
-            <th scope="col">Updated By</th>
+            <th>Actions</th>
+            <th>Stock Group</th>
+            <th>Stock Code</th>
+            <th>Description</th>
+            <th>Barcode</th>
+            <th>Selling Price</th>
+            <th>Offer Price</th>            
+            <th>Discount Type</th>
+            <th>Discount Amount</th>
+            <th>Discount %</th>
+            <th>From Date</th>
+            <th>To Date</th>
+            <th>Remarks</th>
+            <th>Created At</th>
+            <th>Created By</th>
+            <th>Updated At</th>
+            <th>Updated By</th>
         </tr>        
     </thead>
-    <tbody>
+    <tbody>            
         @foreach(var item in Model)
         {
             <tr>
-                <td scrop="row">@(Model.IndexOf(item)+1)</td>
+                <td>@(Model.IndexOf(item)+1)</td>
 
                 <td>
                     <a href="/StockItem/edit?Id=@item.Id" class="btn update">
                         <i class="fa fa-pen-to-square"></i>
                     </a>
-
+                    ||
                     <a href="/StockItem/delete?Id=@item.Id" class="btn delete" onclick="return confirm('Are you sure to delete this record?')">
                         <i class="fa fa-trash"></i>
                     </a>
@@ -65,8 +65,9 @@ else if (TempData["Msg"] != null && Convert.ToBoolean(TempData["IsError"]))
                 <td>@item.StockGrpCode</td>
                 <td>@item.Code</td>
                 <td>@item.Description</td>
-                <td>@item.Sell_Price</td>
                 <td>@item.BarCode</td>
+                <td>@item.Sell_Price</td>
+                <td>@item.Offer_price</td>
                 <td>@item.Disc_Type</td>
                 <td>@item.Disc_Amount</td>
                 <td>@item.Disc_Percent</td>

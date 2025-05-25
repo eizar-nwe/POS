@@ -6,17 +6,18 @@
         <input type="hidden" name="Id" value="@Model.Id"/>
 
         <label for="Code" class="form-label">Code</label>
-        <input type="text" class="form-control" name="Code" id="txtCode" value="@Model.Code" disabled>
+        <input type="text" class="form-control" name="Code" id="txtCode" value="@Model.Code" readonly>
     </div>
     <div class="mb-3">
         <label for="Description" class="form-label">Description</label>
         <input type="text" class="form-control" name="Description" id="txtDesc" value="@Model.Description" placeholder="enter Description here">
     </div>
     <div class="mb-3">
-        <label for="Remarks">Remarks</label>
+        <label for="Remarks" class="form-label">Remarks</label>
         <textarea class="form-control" placeholder="enter Remarks here" name="Remarks" id="txtRemarks">@Model.Remarks</textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary" id="btnUpdate">Update</button>
-    <a href="List" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn btn-update" id="btnUpdate">Update</button>
+    <a href="Delete?Id=@Model.Id" class="btn btn-danger" onclick="return confirm('Are you sure to delete this record?')">Delete</a>
+    <a href="List" class="btn btn-secondary">Cancel</a>    
 </form>

@@ -30,6 +30,12 @@ namespace POS.UnitOfWorks
         public ICashierRepository CashierRepository => cashierRepository ?? new CashierRepository(_dbContext);
         private IStockIncomeRepository stockIncomeRepository;
         public IStockIncomeRepository StockIncomeRepository => stockIncomeRepository?? new StockIncomeRepository(_dbContext);
+        private IMemberDiscountRepository memberDiscountRepository;
+        public IMemberDiscountRepository MemberDiscountRepository => memberDiscountRepository?? new MemberDiscountRepository(_dbContext);
+        private ISaleOrderHaderRepository saleOrderHaderRepository;
+        public ISaleOrderHaderRepository SaleOrderHaderRepository => saleOrderHaderRepository ?? new SaleOrderHaderRepository(_dbContext);
+        private ISaleOrderDetailRepository saleOrderDetailRepository;
+        public ISaleOrderDetailRepository SaleOrderDetailRepository => saleOrderDetailRepository?? new SaleOrderDetailRepository(_dbContext);
 
         public void Commit()
         {

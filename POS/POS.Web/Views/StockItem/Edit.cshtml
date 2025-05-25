@@ -1,86 +1,106 @@
 ﻿@model StockItemViewModel
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/js/stockitem.js"></script>
+<script src="~/js/Common.js"></script>
 
 <h3>Stock Item Edit Form</h3>
 <form action="/StockItem/Update" method="post">
     <input type="hidden" name="Id" value="@Model.Id" />
 
-    <div class="mb-3">        
-        <label for="StockGrp_Id" class="form-label">Stock Group</label>
-        <select class="form-select" name="StockGrp_Id" disabled>
-            @foreach (var stkgrp in Model.StockGrpVMs)
-            {
-                @if (stkgrp.Id == Model.StockGrp_Id)
+    <div class="row-side">
+        <div class="col-side">        
+            <label for="StockGrp_Id" class="form-label">Stock Group</label>
+            <select class="form-select" name="StockGrp_Id" disabled>
+                @foreach (var stkgrp in Model.StockGrpVMs)
                 {
-                    <option value="@stkgrp.Id" selected>@stkgrp.Code</option>
-                    break;
-                }               
-            }
-        </select>
+                    @if (stkgrp.Id == Model.StockGrp_Id)
+                    {
+                        <option value="@stkgrp.Id" selected>@stkgrp.Code</option>
+                        break;
+                    }               
+                }
+            </select>
+        </div>
+        <div class="col-side">
+            <label for="Code" class="form-label">Stock Code</label>
+            <input type="text" class="form-control" name="Code" id="txtCode" value="@Model.Code" readonly>
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label for="Code" class="form-label">Stock Code</label>
-        <input type="text" class="form-control" name="Code" id="txtCode" value="@Model.Code" disabled>
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Description" class="form-label">Description</label>
+            <input type="text" class="form-control" name="Description" id="txtDesc" value="@Model.Description" placeholder="enter Description here">
+        </div>
+        <div class="col-side">
+            <label for="Barcode" class="form-label">Barcode</label>
+            <input type="text" class="form-control" name="Barcode" id="txtBarcode" value="@Model.BarCode" placeholder="enter BarCode here">
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="Description" class="form-label">Description</label>
-        <input type="text" class="form-control" name="Description" id="txtDesc" value="@Model.Description" placeholder="enter Description here">
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Sell_Price" class="form-label">Selling Price</label>
+            <input type="number" class="form-control" name="Sell_Price" id="sellPrice" value="@Model.Sell_Price">
+        </div>
+        <div class="col-side">
+            <label for="Offer_price" class="form-label">Offer Price</label>
+            <input type="number" class="form-control" name="Offer_price" id="txtOffPrice" value="@Model.Offer_price" readonly>
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="Sell_Price" class="form-label">Selling Price</label>
-        <input type="number" class="form-control" name="Sell_Price" id="sellPrice" value="@Model.Sell_Price">
-    </div>
-    <div class="mb-3">
-        <label for="Barcode" class="form-label">Barcode</label>
-        <input type="text" class="form-control" name="Barcode" id="txtBarcode" value="@Model.BarCode" placeholder="enter BarCode here">
-    </div>
-@*     <div class="mb-3">
+@*     <div class="col-side">
         <label for="Disc_Type" class="form-label">Discount Type</label>
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="Disc_Type" id="radioAmt" value="A" @(Model.Disc_Type == "A" ? "checked" : "null") onclick="EnableField()">
+            <input class="form-check-input" type="radio" name="Disc_Type" id="radioAmt" value="A" @(Model.Disc_Type == "A" ? "checked" : "null") onclick="DiscTypeOnChange()">
             <label class="form-check-label" for="radioAmt">Amount</label>
         </div>
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="Disc_Type" id="radioPer" value="P" @(Model.Disc_Type == "P" ? "checked" : "null") onclick="EnableField()">
+            <input class="form-check-input" type="radio" name="Disc_Type" id="radioPer" value="P" @(Model.Disc_Type == "P" ? "checked" : "null") onclick="DiscTypeOnChange()">
             <label class="form-check-label" for="radioPer">Percent</label>
         </div>
     </div> *@
 
-    <div class="mb-3">
-        <label for="Disc_Type" class="form-label">Discount Type</label>
-        <select class="form-select" name="Disc_Type" id="DiscType" onchange="EnableField(this)">           
-            <option value="">[select one]</option>
-            <option value="A">Amount</option>
-            <option value="P">Percent</option>
-        </select>
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Disc_Type" class="form-label">Discount Type</label>
+            <select class="form-select" name="Disc_Type" id="DiscType" onchange="DiscTypeOnChange(this)">
+                <option value="">[select one]</option>
+                <option value="A">Amount</option>
+                <option value="P">Percent</option>
+            </select>
+        </div>
+        <div class="col-hidden">Hidden</div>
     </div>
 
-    <div class="mb-3">
-        <label for="Disc_Amount" class="form-label">Discount Amount</label>
-        <input type="number" class="form-control" name="Disc_Amount" id="DiscAmt" value="@Model.Disc_Amount" @(Model.Disc_Type == "P" ? "disabled" : "null") placeholder="enter Discount Amount here">
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Disc_Amount" class="form-label">Discount Amount</label>
+            <input type="number" class="form-control" name="Disc_Amount" id="DiscAmt" value="@Model.Disc_Amount" @(Model.Disc_Type == "A" ? "null" : "readonly")>
+        </div>
+        <div class="col-side">
+            <label for="Disc_Percent" class="form-label">Discount Percent</label>
+            <input type="number" class="form-control" name="Disc_Percent" id="DiscPer" value="@Model.Disc_Percent" @(Model.Disc_Type == "P" ? "null" : "readonly")>
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="Disc_Percent" class="form-label">Discount Percent</label>
-        <input type="number" class="form-control" name="Disc_Percent" id="DiscPer" value="@Model.Disc_Percent" @(Model.Disc_Type == "A" ? "disabled" : "null") placeholder="enter Discount Percent here">
+    <div class="row-side">
+        <div class="col-side">
+            <label for="From_Date" class="form-label">Effective From Date</label>
+            <input type="datetime-local" class="form-control" name="From_Date" id="txtFrom_Date" value="@(Model.From_Date.HasValue ? Model.From_Date.Value.ToString("yyyy-MM-dd HH:mm:ss") : string.Empty)" @(Model.Disc_Type == "" || Model.Disc_Type ==null ? "readonly" : "null")>
+        </div>
+        <div class="col-side">
+            <label for="To_Date" class="form-label">Effective To Date</label>        
+            <input type="datetime-local" class="form-control" name="To_Date" id="txtTo_Date" value="@(Model.To_Date.HasValue ? Model.To_Date.Value.ToString("yyyy-MM-dd HH:mm:ss") : string.Empty)" @(Model.Disc_Type == "" || Model.Disc_Type == null ? "readonly" : "null")>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label for="From_Date" class="form-label">Effective From Date</label>
-        <input type="datetime-local" class="form-control" name="From_Date" id="txtFrom_Date" value="@(Model.From_Date.HasValue ? Model.From_Date.Value.ToString("yyyy-MM-dd HH:mm:ss") : string.Empty)">
+    <div class="row-bottom">
+        <div class="col-side">
+            <label for="Remarks" class="form-label">Remarks</label>
+            <textarea class="form-control" placeholder="enter Remarks here" name="Remarks" id="txtRemarks">@Model.Remarks</textarea>
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="To_Date" class="form-label">Effective To Date</label>        
-        <input type="datetime-local" class="form-control" name="To_Date" id="txtTo_Date" value="@(Model.To_Date.HasValue ? Model.To_Date.Value.ToString("yyyy-MM-dd HH:mm:ss") : string.Empty)">
-    </div>
-    <div class="mb-3">
-        <label for="Remarks">Remarks</label>
-        <textarea class="form-control" placeholder="enter Remarks here" name="Remarks" id="txtRemarks">@Model.Remarks</textarea>
-    </div>
-    <button type="submit" class="btn btn-primary" id="btnEdit">Update</button>
+        
+    <button type="submit" class="btn btn-update" id="btnEdit">Update</button>
     <a href="List" class="btn btn-secondary">Cancel</a>
+    
 </form>
 
 
@@ -89,5 +109,10 @@
         // Dynamically set the selected option based on a condition
         var selectedValue = "@Model.Disc_Type"; // Replace with your dynamic value
         $('#DiscType').val(selectedValue);
+
+        $('#DiscAmt, #DiscPer, #sellPrice').on('change', function () {
+            calculateOfferPrice();
+        });
     });
+
 </script>

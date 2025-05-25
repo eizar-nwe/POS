@@ -1,0 +1,420 @@
+﻿@model MemberDiscountViewModel
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="~/js/common.js"></script>
+
+<h3>Member Discount Entry Form</h3>
+
+<input type="hidden" name="Id" id="txtId" value="" />
+<input type="hidden" name="LINE_ID" id="txtLINE_ID" value="" />
+
+<div class="row-side">
+    <div class="col-side">
+        <label for="MEMBER_ID" class="form-label">Member</label>
+        <select class="form-select" name="MEMBER_ID" id="memberId" required>
+            <option selected value="x">[select one]</option>
+            @foreach (var mem in Model.MemberVM)
+            {
+                <option value="@mem.Id">@mem.Name</option>
+            }
+        </select>
+    </div>
+</div>
+
+<div id="configGrp" data-api-url="@Url.Action("FilterByStkGrp", "_Share")"></div>
+<div id="configItem" data-api-url="@Url.Action("FilterByStkItem", "_Share")"></div>
+
+<div class="row-side">
+    <div class="col-side" id="GroupList">
+        @await Html.PartialAsync("_GroupListPartial", Model.StkGrpVM)
+    </div>
+
+    <div class="col-side" id="ItemList">
+        @await Html.PartialAsync("_ItemListPartial", Model.StkItemVM)
+    </div>
+</div>
+
+<div class="row-side">
+    <div class="col-side">
+        <label for="ORIGIN_PRICE" class="form-label">Original Price</label>
+        <input type="number" class="form-control" name="ORIGIN_PRICE" id="txtOrgPrice" value="0" readonly>
+    </div>
+    <div class="col-side">
+        <label for="OFFER_PRICE" class="form-label">Offer Price</label>
+        <input type="number" class="form-control" name="OFFER_PRICE" id="txtOffPrice" value="0" readonly>
+    </div>
+</div>
+
+<div class="row-side">
+    <div class="col-side">
+        <label for="Disc_Type" class="form-label">Discount Type</label>
+        <select class="form-select" name="Disc_Type" id="DiscType" onchange="DiscTypeOnChange(this)">
+            <option selected value="">[select one]</option>
+            <option value="A">Amount</option>
+            <option value="P">Percent</option>
+        </select>
+    </div>
+</div>
+
+<div class="row-side">
+    <div class="col-side">
+        <label for="Disc_Amount" class="form-label">Discount Amount</label>
+        <input type="number" class="form-control" name="Disc_Amount" id="DiscAmt" value="0" readonly>
+    </div>
+    <div class="col-side">
+        <label for="Disc_Percent" class="form-label">Discount Percent</label>
+        <input type="number" class="form-control" name="Disc_Percent" id="DiscPer" value="0" readonly>
+    </div>
+</div>
+
+<div class="row-side">
+    <div class="col-side">
+        <label for="From_Date" class="form-label">Effective From Date</label>
+        <input type="datetime-local" class="form-control" name="From_Date" id="txtFrom_Date" readonly>
+    </div>
+    <div class="col-side">
+        <label for="To_Date" class="form-label">Effective To Date</label>
+        <input type="datetime-local" class="form-control" name="To_Date" id="txtTo_Date" readonly>
+    </div>
+</div>
+
+<div class="row-bottom">
+    <div class="col-side">
+        <label for="Remarks" class="form-label">Remarks</label>
+        <textarea class="form-control" name="Remarks" id="txtRemarks" placeholder="enter Remarks here"></textarea>
+    </div>
+</div>
+
+<div class="mb-3">
+    <button id="btnAddItem" class="btn btn-add">Add Item</button>
+    <button id="btnDelete" class="btn btn-danger" disabled>Delete</button>
+    <a href="/MemberDiscount/List" class="btn btn-secondary">Cancel</a>
+
+    <button id="btnUpdateItem" class="btn btn-update" style="display: none;">Update Item</button>
+    <button id="btnCancel" class="btn btn-danger" style="display: none;">Cancel</button>
+</div>
+
+<table id="DetailTable">
+    <thead>
+        <tr>
+            <th scope="col">Action</th>
+            <th scope="col">Member</th>
+            <th scope="col">Stock Group</th>
+            <th scope="col">Stock Item</th>
+            <th scope="col">Original Price</th>
+            <th scope="col">Offer Price</th>
+            <th scope="col">Discount Type</th>
+            <th scope="col">Discount Amount</th>
+            <th scope="col">Discount %</th>
+            <th scope="col">From Date</th>
+            <th scope="col">To Date</th>
+            <th scope="col">Remarks</th>            
+            <th scope="col" style="display: none;">Line Id</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    //to select table row
+    $(document).ready(function () {
+        $('#DiscAmt, #DiscPer').on('change', function () {
+            calculateOfferPrice();
+        });
+
+        $("#DetailTable").on("click", "tr", function () {
+
+            document.getElementById("btnAddItem").style.display = "none";
+            document.getElementById("btnDelete").style.display = "none";
+            $('a.btn-secondary').css('display', 'none');
+
+            document.getElementById("btnUpdateItem").style.display = "inline-block";
+            document.getElementById("btnCancel").style.display = "inline-block";
+
+            $("#DetailTable tr").removeClass("selected");
+
+            $(this).addClass("selected"); // Highlight the clicked row
+
+            // Get cell data
+            var mem = $(this).find("td:eq(1)").attr("data-val");
+            var stkGrp = $(this).find("td:eq(2)").attr("data-val");
+            var stkItm = $(this).find("td:eq(3)").attr("data-val");
+            var OrgPrice = $(this).find("td:eq(4)").text();
+            var OffPrice = $(this).find("td:eq(5)").text();
+            var DiscType = $(this).find("td:eq(6)").text();
+            var DiscAmt = $(this).find("td:eq(7)").text();
+            var DiscPer = $(this).find("td:eq(8)").text();
+            var From_Date = $(this).find("td:eq(9)").text();
+            var To_Date = $(this).find("td:eq(10)").text();
+            var remk = $(this).find("td:eq(11)").text();
+            var line = $(this).find("td:eq(12)").text();
+
+            $("#memberId").val(mem);
+            $("#stkgrpId").val(stkGrp);
+            ItemPartialLoad(stkGrp,stkItm); //to assign item list & value
+            $("#txtOrgPrice").val(OrgPrice);
+            $("#txtOffPrice").val(OffPrice);
+            $("#DiscType").val(DiscType);
+            $("#DiscAmt").val(DiscAmt);
+            $("#DiscPer").val(DiscPer);
+            $("#txtFrom_Date").val(From_Date);
+            $("#txtTo_Date").val(To_Date);
+            $("#txtRemarks").val(remk);
+            $("#txtLINE_ID").val(line);
+
+            $("#txtFrom_Date").prop('readonly', false);
+            $("#txtTo_Date").prop('readonly', false);
+
+            if (DiscType === "A") {
+                $("#DiscAmt").prop('readonly', false);
+                $("#DiscPer").prop('readonly', true);
+            } else if (DiscType === "P") {
+                $("#DiscAmt").prop('readonly', true);
+                $("#DiscPer").prop('readonly', false);
+            }else {
+                $("#DiscAmt").prop('readonly', true);
+                $("#DiscPer").prop('readonly', true);
+                $("#txtFrom_Date").prop('readonly', true);
+                $("#txtTo_Date").prop('readonly', true);
+            }
+        });
+    });
+
+    //to cancel for update and change to Add mode
+    $("#btnCancel").click(function () {
+        $("#DetailTable tr").removeClass("selected");
+
+        resetScreenField();
+        ItemPartialLoad("x",""); //to assign item list
+    });
+
+    function chkFieldValue() {
+        var mem_id = $("#memberId").val();
+        var grp_id = $("#stkgrpId").val();
+        var item_id = $("#stkItemId").val();
+
+        if (mem_id == 'x') {
+            alert('Member cannot be left blank.');
+            return false;
+        }
+        if (grp_id == 'x') {
+            alert('Stock Group cannot be left blank.');
+            return false;
+        }
+        if (item_id == 'x') {
+            alert('Stock Item cannot be left blank.');
+            return false;
+        }
+        return true;
+    };
+
+    //to create record
+    $("#btnAddItem").on("click", function (evt) {
+        if (chkFieldValue()) {
+            const url = "/MemberDiscount/AddItem";
+            var anItem = {};
+            anItem.Id = $("#txtId").val();
+            anItem.MEMBER_ID = $("#memberId").val();
+            anItem.STOCKGRP_ID = $("#stkgrpId").val();
+            anItem.STOCKITEM_ID = $("#stkItemId").val();
+            anItem.ORIGIN_PRICE = $("#txtOrgPrice").val();
+            anItem.OFFER_PRICE = $("#txtOffPrice").val();
+            anItem.Disc_Type = $("#DiscType").val();
+            anItem.Disc_Amount = $("#DiscAmt").val();
+            anItem.Disc_Percent = $("#DiscPer").val();
+            anItem.From_Date = $("#txtFrom_Date").val();
+            anItem.To_Date = $("#txtTo_Date").val();            
+            anItem.Remarks = $("#txtRemarks").val();
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: anItem,
+                success: function (response) {
+                    if (response != null) {
+                        if (response.status) refreshData(response.resVal);
+                        else alert(response.message);
+
+                        var selectedstkGrp = $("#stkgrpId").val();
+                        ItemPartialLoad(selectedstkGrp,""); //to assign item list
+                    }
+                    else {
+                        alert("Error was occured when the record is created.");
+                    }
+                },
+                failure: function (response) {
+                    alert("Fail : Error was occured when the record is created.");
+                }
+            });
+        }
+    });
+    
+    $("#btnUpdateItem").on("click", function (evt) {
+        if (chkFieldValue()) {
+            const url = "/MemberDiscount/UpdateItem";
+            var anItem = {};
+            anItem.pCaller= "Entry",
+            anItem.Id = $("#txtId").val();
+            anItem.LINE_ID = $("#txtLINE_ID").val();
+            anItem.MEMBER_ID = $("#memberId").val();
+            anItem.STOCKGRP_ID = $("#stkgrpId").val();
+            anItem.STOCKITEM_ID = $("#stkItemId").val();
+            anItem.ORIGIN_PRICE = $("#txtOrgPrice").val();
+            anItem.OFFER_PRICE = $("#txtOffPrice").val();
+            anItem.Disc_Type = $("#DiscType").val();
+            anItem.Disc_Amount = $("#DiscAmt").val();
+            anItem.Disc_Percent = $("#DiscPer").val();
+            anItem.From_Date = $("#txtFrom_Date").val();
+            anItem.To_Date = $("#txtTo_Date").val();
+            anItem.Remarks = $("#txtRemarks").val();
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: anItem,
+                success: function (response) {
+                    if (response != null) {
+                        alert(response.message);
+                        refreshData(response.resVal);
+                    }
+                    else {
+                        alert("Error was occured when the record is updated.");
+                    }
+
+                    var selectedstkGrp = $("#stkgrpId").val();
+                    ItemPartialLoad(selectedstkGrp,""); //to assign item list
+                },
+                failure: function (response) {
+                    alert("Fail : Error was occured when the record is updated.");
+                }
+            });
+        }
+    });
+
+    //to prepare table row for inserted records
+    function refreshData(retVal) {
+
+        const data = retVal;
+
+        const tbody = document.querySelector("#DetailTable tbody");
+        tbody.innerHTML = "";
+
+        if (data.length !== 0) {
+            $("#txtId").val(data[0].id);
+            $("#btnDelete").attr('disabled', false);
+
+            // Render table rows dynamically
+            data.forEach(user => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                <td>
+                    <button class="action-btn delete-btn" onclick="deleteRow(this)"><i class="fa fa-trash"></i></button>
+                </td>
+                <td data-field="MEMBER_ID" data-val="${user.membeR_ID}">${user.memberInfo}</td>
+                <td data-field="STOCKGRP_ID" data-val="${user.stockgrP_ID}">${user.stkGrpInfo}</td>
+                <td data-field="STOCKITEM_ID" data-val="${user.stockiteM_ID}">${user.stkItemInfo}</td>
+                <td data-field="ORIGIN_PRICE">${user.origiN_PRICE}</td>
+                <td data-field="OFFER_PRICE">${user.offeR_PRICE}</td>
+                <td data-field="Disc_Type">${user.disc_Type}</td>
+                <td data-field="Disc_Amount">${user.disc_Amount}</td>
+                <td data-field="Disc_Percent">${user.disc_Percent}</td>
+                <td data-field="From_Date">${user.from_Date == null ? '':user.from_Date}</td>
+                <td data-field="To_Date">${user.to_Date == null ? '':user.to_Date}</td>                             
+                <td data-field="Remarks">${user.remarks}</td>
+                <td data-field="LINE_ID" style="display: none;">${user.linE_ID}</td>
+                `;
+                
+                //<td data-field="From_Date">${user.from_Date ? new Date(user.from_Date).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) : ''}</td>
+
+                tbody.appendChild(row);
+            });
+        } else $("#btnDelete").attr('disabled', true);
+
+        resetScreenField();
+    };
+    
+    //to delete selected record from detail table
+    function deleteRow(btn) {
+        const confirmed = confirm("Are you sure you want to delete this record?");
+        if (confirmed) {
+            var url = "/MemberDiscount/DeleteItem";
+
+            var curId = $("#txtId").val();
+
+            const row = $(btn).closest('tr');
+            var curline_id = row.find('td:eq(12)').text();
+
+            var data = {
+                pCaller: "Entry",
+                id: curId,
+                line_id: curline_id
+            }
+
+            $.get(url, data, function (response) {
+                if (response != null) {
+                    alert(response.message);
+                    refreshData(response.resVal);
+                }
+                else {
+                    alert("Error was occured when the record is deleted.");
+                }
+                var selectedstkGrp = $("#stkgrpId").val();
+                ItemPartialLoad(selectedstkGrp,""); //to assign item list
+            });
+        }
+    };
+
+    //to delete all created records and go to List page
+    $("#btnDelete").click(function () {
+        const confirmed = confirm("Are you sure you want to delete this record?");
+        if (confirmed) {
+            var url = "/MemberDiscount/DeleteRec";
+            var curId = $("#txtId").val();
+            var data = {
+                id: curId
+            }
+            $.get(url, data, function (response) {
+
+                if (response != null) {
+                    // Redirect using JavaScript
+                    alert(response.message);
+                    window.location.href = response.redirectUrl;
+                } else {
+                    alert("Error was occured when the record is deleted.");
+                }
+            });
+        }
+    });
+
+    function resetScreenField(){
+        //clear screen fields
+        $("#txtLINE_ID").val("");
+        $("#memberId").val("x");
+        $("#stkgrpId").val("x");
+        $("#stkItemId").val("x");
+        $("#txtOrgPrice").val("0");
+        $("#txtOffPrice").val("0");
+        $("#DiscType").val("");
+        $("#DiscAmt").val("0");
+        $("#DiscPer").val("0");
+        $("#txtFrom_Date").val("");
+        $("#txtTo_Date").val("");
+        $("#txtRemarks").val("");
+
+        $("#DiscAmt").prop('readonly', true);
+        $("#DiscPer").prop('readonly', true);
+        $("#txtFrom_Date").prop('readonly', true);
+        $("#txtTo_Date").prop('readonly', true);
+
+        //show AddItem after saveing
+        document.getElementById("btnAddItem").style.display = "inline-block";
+        document.getElementById("btnDelete").style.display = "inline-block";
+        $('a.btn-secondary').css('display', 'inline-block');
+
+        //hide UpdateItem after saveing
+        document.getElementById("btnUpdateItem").style.display = "none";
+        document.getElementById("btnCancel").style.display = "none";
+    };
+</script>

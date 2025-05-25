@@ -1,0 +1,83 @@
+﻿@model IList<MemberDiscountViewModel>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<h3>Member Discount List</h3>
+
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-info" role="alert">
+        <span>@TempData["Msg"]</span>
+    </div>
+}
+
+<div class="table-responsive">
+    <table class="table table-bordered" id="MemberDiscTbl">
+        <thead>
+            <tr>
+                <th scope="col">
+                    <a href="/MemberDiscount/entry" class="btn add">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                </th>
+                <th scope="col">Actions</th>
+                <th scope="col">Member</th>
+                <th scope="col">Stock Group</th>
+                <th scope="col">Stock Item</th>
+                <th scope="col">Original Price</th>
+                <th scope="col">Offer Price</th>
+                <th scope="col">Discount Type</th>
+                <th scope="col">Discount Amount</th>
+                <th scope="col">Discount %</th>
+                <th scope="col">From Date</th>
+                <th scope="col">To Date</th>
+                <th scope="col">Remarks</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Updated At</th>
+                <th scope="col">Updated By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td scope="row">@(Model.IndexOf(item) + 1)</td>
+                    <td>
+                        <a href="/MemberDiscount/edit?id=@item.Id&line_id=@item.LINE_ID" class="btn update">
+                            <i class="fa fa-pen-to-square"></i>
+                        </a>
+                        ||
+                        <a href="/MemberDiscount/DeleteItem?pCaller=List&id=@item.Id&line_id=@item.LINE_ID" class="btn delete" onclick="return confirm('Are you sure to delete this record?')">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </td>
+
+                    <td>@item.MemberInfo</td>
+                    <td>@item.StkGrpInfo</td>
+                    <td>@item.StkItemInfo</td>
+                    <td>@item.ORIGIN_PRICE</td>
+                    <td>@item.OFFER_PRICE</td>
+                    <td>@item.Disc_Type</td>
+                    <td>@item.Disc_Amount</td>
+                    <td>@item.Disc_Percent</td>
+                    <td>@(item.From_Date.HasValue ? item.From_Date.Value.ToString("yyyy-MM-dd HH:mm:ss tt") : string.Empty)</td>
+                    <td>@(item.To_Date.HasValue ? item.To_Date.Value.ToString("yyyy-MM-dd HH:mm:ss tt") : string.Empty)</td>                    
+                    <td>@item.Remarks</td>
+                    <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss tt")</td>
+                    <td>@item.CreatedBy</td>
+                    <td>@(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss tt") : string.Empty)</td>
+                    <td>@item.UpdatedBy</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#MemberDiscTbl').DataTable(); //added css & js reference in shared _Layout
+    });
+</script>

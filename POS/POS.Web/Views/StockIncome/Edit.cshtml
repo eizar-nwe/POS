@@ -1,105 +1,114 @@
 ﻿@model StockIncomeViewModel
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="~/css/stockincome.css" rel="stylesheet" />
+<script src="~/js/common.js"></script>
 
 <h3>Stock Income Edit Form</h3>
-<form action="/StockIncome/UpdateItem" method="post">
-    <div class="mb-3">
-        <input type="hidden" name="Id" id="txtId" value="@Model.Id" />
-        <input type="hidden" name="LINE_ID" id="txtLINE_ID" value="@Model.LINE_ID" />
-        <input type="hidden" name="pCaller" id="txtpCaller" value="Edit" />
-    </div>
+<form id="StkIncome" action="/StockIncome/UpdateItem" method="post">
 
-    <div class="mb-3">
-        <label for="SUPPLIER_ID" class="form-label">Supplier</label>
-        <select class="form-select" name="SUPPLIER_ID" id="supplierId" required>
-            <option selected value="x">[select one]</option>
-            @foreach (var supr in Model.SupplierVM)
-            {
-                @if (supr.Id == Model.SUPPLIER_ID)
-                {                
-                    <option value="@supr.Id" selected>@supr.Name</option>
-                }else
+    <input type="hidden" name="Id" id="txtId" value="@Model.Id" />
+    <input type="hidden" name="LINE_ID" id="txtLINE_ID" value="@Model.LINE_ID" />
+    <input type="hidden" name="pCaller" id="txtpCaller" value="Edit" />
+
+    <div class="row-side">
+        <div class="col-side">
+            <label for="SUPPLIER_ID" class="form-label">Supplier</label>
+            <select class="form-select" name="SUPPLIER_ID" id="supplierId">
+                <option selected value="x">[select one]</option>
+                @foreach (var supr in Model.SupplierVM)
                 {
-                    <option value="@supr.Id">@supr.Name</option>
+                    @if (supr.Id == Model.SUPPLIER_ID)
+                    {                
+                        <option value="@supr.Id" selected>@supr.Name</option>
+                    }else
+                    {
+                        <option value="@supr.Id">@supr.Name</option>
+                    }
                 }
-            }
-        </select>
+            </select>
+        </div>
     </div>
 
-    <div class="mb-3" id="GroupList">
-        <label for="STOCKGRP_ID" class="form-label">Stock Group</label>
-        <select class="form-select" name="STOCKGRP_ID" id="stkgrpId" required>
-            <option selected value="x">[select one]</option>
-            @foreach (var stkgrp in Model.StkGrpVM)
-            {
-                @if (stkgrp.Id == Model.STOCKGRP_ID)
-                {                
-                    <option value="@stkgrp.Id" selected>@stkgrp.Code</option>
-                }
-                else
+    <div id="configGrp" data-api-url="@Url.Action("FilterByStkGrp", "_Share")"></div>
+    <div id="configItem" data-api-url="@Url.Action("FilterByStkItem", "_Share")"></div>
+
+    <div class="row-side">        
+        <div class="col-side" id="GroupList">
+            <label for="STOCKGRP_ID" class="form-label">Stock Group</label>
+            <select class="form-select" name="STOCKGRP_ID" id="stkgrpId">
+                <option selected value="x">[select one]</option>
+                @foreach (var stkgrp in Model.StkGrpVM)
                 {
-                    <option value="@stkgrp.Id">@stkgrp.Code</option>
+                    @if (stkgrp.Id == Model.STOCKGRP_ID)
+                    {                
+                        <option value="@stkgrp.Id" selected>@stkgrp.Code</option>
+                    }
+                    else
+                    {
+                        <option value="@stkgrp.Id">@stkgrp.Code</option>
+                    }
                 }
-            }
-        </select>
-    </div>
-
-    <div class="mb-3" id="ItemList">
-        <label for="STOCKITEM_ID" class="form-label">Stock Item</label>
-        <select class="form-select" name="STOCKITEM_ID" id="stkItemId" required>
-            <option selected value="x">[select one]</option>
-            @foreach (var stkItem in Model.StkItemVM)
-            {
-                @if (stkItem.Id == Model.STOCKITEM_ID)
+            </select>
+        </div>
+        
+        <div class="col-side" id="ItemList">
+            <label for="STOCKITEM_ID" class="form-label">Stock Item</label>
+            <select class="form-select" name="STOCKITEM_ID" id="stkItemId">
+                <option selected value="x">[select one]</option>
+                @foreach (var stkItem in Model.StkItemVM)
                 {
-                    <option value="@stkItem.Id" selected>@stkItem.Code</option>
+                    @if (stkItem.Id == Model.STOCKITEM_ID)
+                    {
+                        <option value="@stkItem.Id" selected>@stkItem.Code</option>
+                    }
+                    else
+                    {
+                        <option value="@stkItem.Id">@stkItem.Code</option>
+                    }
                 }
-                else
-                {
-                    <option value="@stkItem.Id">@stkItem.Code</option>
-                }
-            }
-        </select>
+            </select>
+        </div>
+    </div>
+    <div class="row-side">
+        <div class="col-side">
+            <label for="PRICE" class="form-label">Price</label>
+            <input type="number" class="form-control" name="PRICE" id="txtPrice" value="@Model.PRICE">
+        </div>
+
+        <div class="col-side">
+            <label for="QUANTITY" class="form-label">Quantity</label>
+            <input type="number" class="form-control" name="QUANTITY" id="txtQnty" value="@Model.QUANTITY">
+        </div>
+    </div>
+    <div class="row-bottom">
+        <div class="col-side">
+            <label for="Remarks" class="form-label">Remarks</label>
+            <textarea class="form-control" name="Remarks" id="txtRemarks" placeholder="enter Remarks here">@Model.Remarks</textarea>
+        </div>
+
     </div>
 
-    <div class="mb-3">
-        <label for="PRICE" class="form-label">Price</label>
-        <input type="number" class="form-control" name="PRICE" id="txtPrice" value="@Model.PRICE" required>
-    </div>
+    <button type="submit" class="btn btn-update" id="btnEdit">Update</button>
+    <a href="List" class="btn btn-secondary">Cancel</a>
 
-    <div class="mb-3">
-        <label for="QUANTITY" class="form-label">Quantity</label>
-        <input type="number" class="form-control" name="QUANTITY" id="txtQnty" value="@Model.QUANTITY" required>
-    </div>
-
-    <div class="mb-3">
-        <label for="Remarks" class="form-label">Remarks</label>
-        <textarea class="form-control" name="Remarks" id="txtRemarks" placeholder="enter Remarks here">@Model.Remarks</textarea>
-    </div>
-
-    <div class="mb-3">
-        <button type="submit" class="btn btn-primary" id="btnEdit">Update</button>
-        <a href="List" class="btn btn-secondary">Cancel</a>
-    </div>
 </form>
 
 <script>
-    $(document).ready(function () {        
+    $(document).ready(function () {
+      $('#btnEdit').on('click', function (e) {
+        e.preventDefault(); // ⛔ prevent the form from auto-submitting
 
-        $('#txtPrice, #txtQnty').keyup(function () {
-            chkFieldValue();
-        });
+        // Custom JS check
+        if (!chkFieldValue()) {          
+          return; // Stop if value is null/empty
+        }
 
-        $('#supplierId').on('change', function () {
-            chkFieldValue();
-        });
+        // ✅ If JS passes, manually submit the form
+        $('#StkIncome')[0].submit();
+      });
     });
-    
-    function chkFieldValue() {
 
+    function chkFieldValue() {
         var supr_id = $("#supplierId").val();
         var grp_id = $("#stkgrpId").val();
         var item_id = $("#stkItemId").val();
@@ -107,65 +116,25 @@
         var qty = $("#txtQnty").val();
 
         if (supr_id == 'x') {
-            $('#btnEdit').attr('disabled', true);
+            alert('Supplier cannot be left blank.');
             return false;
         }
         if (grp_id == 'x') {            
-            $('#btnEdit').attr('disabled', true);
+            alert('Stock Group cannot be left blank.');
             return false;
         }
         if (item_id == 'x') {
-            $('#btnEdit').attr('disabled', true);
+            alert('Stock Item cannot be left blank.');
             return false;
         }
         if (prce == null || prce == undefined || prce == '') {
-            $('#btnEdit').attr('disabled', true);
+            alert('Price cannot be left blank.');
             return false;
         }
         if (qty == null || qty == undefined || qty == '') {
-            $('#btnEdit').attr('disabled', true);
+            alert('Quantity cannot be left blank.');
             return false;
-        }
-
-        $('#btnEdit').attr('disabled', false);
+        }        
         return true;
     };
-
-    $(document).on('change', '#stkgrpId', function () {
-        var selectedstkGrp = $(this).val();
-
-        $.ajax({
-            url: '@Url.Action("FilterByStkGrp", "_Share")',
-            type: 'GET',
-            data: { stkGrp: selectedstkGrp },
-            success: function (result) {
-                $('#ItemList').html(result);
-                chkFieldValue();
-            },
-            error: function () {
-                alert("Failed to load Stock Item.");
-            }
-        });
-    });
-
-    $(document).on('change', '#stkItemId', function () {
-        var selecteditem = $(this).val();
-
-        if (selecteditem != "x")
-        {
-            $.ajax({
-            url: '@Url.Action("FilterByStkItem", "_Share")',
-            type: 'GET',
-            data: { stkItem: selecteditem },
-            success: function (result) {
-                $("#stkgrpId").val(result);
-                chkFieldValue();
-            },
-            error: function () {
-                alert("Failed to load Stock Group.");
-            }
-            });
-        }
-    });
-
 </script>

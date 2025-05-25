@@ -227,7 +227,7 @@ namespace POS.Services
         }
         #endregion
 
-        #region "private" 
+        #region "helper" 
         private async Task<string> GetIpAsync()
         {
             return await NetworkHelper.GetIpAddressAsnyc();

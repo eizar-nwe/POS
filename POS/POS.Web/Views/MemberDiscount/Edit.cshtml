@@ -1,0 +1,175 @@
+﻿@model MemberDiscountViewModel
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/Common.js"></script>
+
+<h3>Member Discount Edit Form</h3>
+<form id="MemDisc" action="/MemberDiscount/UpdateItem" method="post">
+
+    <input type="hidden" name="Id" id="txtId" value="@Model.Id" />
+    <input type="hidden" name="LINE_ID" id="txtLINE_ID" value="@Model.LINE_ID" />
+    <input type="hidden" name="pCaller" id="txtpCaller" value="Edit" />
+    
+    <div class="row-side">
+        <div class="col-side">
+            <label for="MEMBER_ID" class="form-label">Member</label>
+            <select class="form-select" name="MEMBER_ID" id="memberId" required>
+                <option selected value="x">[select one]</option>
+                @foreach (var mem in Model.MemberVM)
+                {
+                    @if (mem.Id == Model.MEMBER_ID)
+                    {
+                        <option value="@mem.Id" selected>@mem.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@mem.Id">@mem.Name</option>
+                    }               
+                }
+            </select>
+        </div>
+    </div>
+
+    <div id="configGrp" data-api-url="@Url.Action("FilterByStkGrp", "_Share")"></div>
+    <div id="configItem" data-api-url="@Url.Action("FilterByStkItem", "_Share")"></div>
+
+    <div class="row-side">
+        <div class="col-side" id="GroupList">
+            <label for="STOCKGRP_ID" class="form-label">Stock Group</label>
+            <select class="form-select" name="STOCKGRP_ID" id="stkgrpId" required>
+                <option selected value="x">[select one]</option>
+                @foreach (var stkgrp in Model.StkGrpVM)
+                {
+                    @if (stkgrp.Id == Model.STOCKGRP_ID)
+                    {
+                        <option value="@stkgrp.Id" selected>@stkgrp.Code</option>
+                    }
+                    else
+                    {
+                        <option value="@stkgrp.Id">@stkgrp.Code</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-side" id="ItemList">
+            <label for="STOCKITEM_ID" class="form-label">Stock Item</label>
+            <select class="form-select" name="STOCKITEM_ID" id="stkItemId" required>
+                <option selected value="x">[select one]</option>
+                @foreach (var stkItem in Model.StkItemVM)
+                {
+                    @if (stkItem.Id == Model.STOCKITEM_ID)
+                    {
+                        <option value="@stkItem.Id" selected>@stkItem.Code</option>
+                    }
+                    else
+                    {
+                        <option value="@stkItem.Id">@stkItem.Code</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="row-side">
+        <div class="col-side">
+            <label for="ORIGIN_PRICE" class="form-label">Original Price</label>
+            <input type="number" class="form-control" name="ORIGIN_PRICE" id="txtOrgPrice" value="@Model.ORIGIN_PRICE" readonly>
+        </div>
+        <div class="col-side">
+            <label for="OFFER_PRICE" class="form-label">Offer Price</label>
+            <input type="number" class="form-control" name="OFFER_PRICE" id="txtOffPrice" value="@Model.OFFER_PRICE" readonly>
+        </div>
+    </div>
+
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Disc_Type" class="form-label">Discount Type</label>
+            <select class="form-select" name="Disc_Type" id="DiscType" onchange="DiscTypeOnChange(this)">
+                <option value="">[select one]</option>
+                <option value="A">Amount</option>
+                <option value="P">Percent</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row-side">
+        <div class="col-side">
+            <label for="Disc_Amount" class="form-label">Discount Amount</label>
+            <input type="number" class="form-control" name="Disc_Amount" id="DiscAmt" value="@Model.Disc_Amount" @(Model.Disc_Type == "A" ? "null" : "readonly")>
+        </div>
+        <div class="col-side">
+            <label for="Disc_Percent" class="form-label">Discount Percent</label>
+            <input type="number" class="form-control" name="Disc_Percent" id="DiscPer" value="@Model.Disc_Percent" @(Model.Disc_Type == "P" ? "null" : "readonly")>
+        </div>
+    </div>
+
+    <div class="row-side">
+        <div class="col-side">
+            <label for="From_Date" class="form-label">Effective From Date</label>
+            <input type="datetime-local" class="form-control" name="From_Date" id="txtFrom_Date" value="@(Model.From_Date.HasValue ? Model.From_Date.Value.ToString("yyyy-MM-dd HH:mm:ss") : string.Empty)" @(Model.Disc_Type == "" ? "readonly" : "null")>
+        </div>
+        <div class="col-side">
+            <label for="To_Date" class="form-label">Effective To Date</label>
+            <input type="datetime-local" class="form-control" name="To_Date" id="txtTo_Date" value="@(Model.To_Date.HasValue ? Model.To_Date.Value.ToString("yyyy-MM-dd HH:mm:ss") : string.Empty)" @(Model.Disc_Type == "" ? "readonly" : "null")>
+        </div>
+    </div>
+
+    <div class="row-bottom">
+        <div class="col-side">
+            <label for="Remarks" class="form-label">Remarks</label>
+            <textarea class="form-control" name="Remarks" id="txtRemarks" placeholder="enter Remarks here">@Model.Remarks</textarea>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-update" id="btnEdit">Update</button>
+    <a href="List" class="btn btn-secondary">Cancel</a>
+
+</form>
+
+<script>
+
+    $(document).ready(function () {
+        // Dynamically set the selected option based on a condition
+        var selectedValue = "@Model.Disc_Type"; // Replace with your dynamic value
+        $('#DiscType').val(selectedValue);
+
+        $('#DiscAmt, #DiscPer').on('change', function () {
+            calculateOfferPrice();
+        });
+
+        $('#btnEdit').on('click', function (e) {
+        e.preventDefault(); // ⛔ prevent the form from auto-submitting
+
+        // Custom JS check
+        if (!chkFieldValue()) {          
+            return; // Stop if value is null/empty
+        }
+
+        // ✅ If JS passes, manually submit the form
+        $('#MemDisc')[0].submit();
+        });
+    });
+
+    function chkFieldValue() {
+        var mem_id = $("#memberId").val();
+        var grp_id = $("#stkgrpId").val();
+        var item_id = $("#stkItemId").val();
+
+        if (mem_id == 'x') {
+            alert('Member cannot be left blank.');
+            return false;
+        }
+        if (grp_id == 'x') {
+            alert('Stock Group cannot be left blank.');
+            return false;
+        }
+        if (item_id == 'x') {
+            alert('Stock Item cannot be left blank.');
+            return false;
+        }
+        
+        return true;
+    };
+
+</script>
