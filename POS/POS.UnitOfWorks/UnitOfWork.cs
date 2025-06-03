@@ -36,6 +36,8 @@ namespace POS.UnitOfWorks
         public ISaleOrderHaderRepository SaleOrderHaderRepository => saleOrderHaderRepository ?? new SaleOrderHaderRepository(_dbContext);
         private ISaleOrderDetailRepository saleOrderDetailRepository;
         public ISaleOrderDetailRepository SaleOrderDetailRepository => saleOrderDetailRepository?? new SaleOrderDetailRepository(_dbContext);
+        private IPaymentRepository paymentRepository;
+        public IPaymentRepository PaymentRepository => paymentRepository?? new PaymentRepository(_dbContext);
 
         public void Commit()
         {

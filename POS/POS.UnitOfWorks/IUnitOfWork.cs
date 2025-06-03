@@ -21,5 +21,6 @@ namespace POS.UnitOfWorks
         IMemberDiscountRepository MemberDiscountRepository { get; }
         ISaleOrderHaderRepository SaleOrderHaderRepository { get; }
         ISaleOrderDetailRepository SaleOrderDetailRepository { get; }
+        IPaymentRepository PaymentRepository { get; }
     }
 }

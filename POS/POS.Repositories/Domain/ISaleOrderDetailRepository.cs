@@ -5,8 +5,6 @@ namespace POS.Repositories.Domain
 {
     public interface ISaleOrderDetailRepository:IBaseRepository<SaleOrderDetailEntity>
     {
-        bool AddAsync(SaleOrderDetailEntity entity);
-        bool UpdateAsync(SaleOrderDetailEntity entity);
-        bool DeleteAsync(SaleOrderDetailEntity entity);
+        Task<int> Execute_SaleDetl_Procedure(string cmd, string id, int lineId, string grpId, string itemId, decimal qnty, string rmk, string crdBy);
     }
 }

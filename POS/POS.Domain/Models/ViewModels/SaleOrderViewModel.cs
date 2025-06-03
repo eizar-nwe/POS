@@ -15,8 +15,11 @@ namespace POS.Domain.Models.ViewModels
         public string DISC_TYPE { get; set; }                      
         public decimal DISC_AMOUNT { get; set; }
         public decimal TOT_DISC_AMT { get; set; }
-        public decimal TOT_AMT { get; set; }
+        public decimal TOT_AMT { get; set; }        
         public decimal NET_AMT { get; set; }
+        public decimal SUB_TOT { get; set; }
+        public decimal DISC_TOT { get; set; }
+        public decimal ALL_TOT { get; set; }
 
         public IList<StockGroupViewModel> StkGrpVM { get; set; }
         public IList<StockItemViewModel> StkItemVM { get; set; }

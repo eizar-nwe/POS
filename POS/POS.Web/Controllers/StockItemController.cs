@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using POS.Domain.Models.DataModels;
 using POS.Domain.Models.ViewModels;
 using POS.Services;
 
@@ -6,11 +8,12 @@ namespace POS.Domain.Controllers
 {
     public class StockItemController : Controller
     {
+        private readonly IWebHostEnvironment _whe;
         private readonly IStockItemService _stockItemService;
         private readonly IStockGroupService _stockGroupService;
-
-        public StockItemController(IStockItemService stockItemService,IStockGroupService stockGroupService)
+        public StockItemController(IWebHostEnvironment whe,IStockItemService stockItemService,IStockGroupService stockGroupService)
         {
+            this._whe = whe;
             this._stockItemService = stockItemService;
             this._stockGroupService = stockGroupService;
         }
@@ -27,7 +30,7 @@ namespace POS.Domain.Controllers
         public IActionResult Entry(StockItemViewModel stockItemVM)
         {
             try
-            {
+            {                
                 bool result = _stockItemService.Create(stockItemVM);
                 if (result)
                 {
@@ -55,7 +58,6 @@ namespace POS.Domain.Controllers
             
             return View(stockItemVM);
         }
-
         [HttpPost]
         public IActionResult Update(StockItemViewModel stockItemVM)
         {
@@ -84,7 +86,7 @@ namespace POS.Domain.Controllers
         {
             try
             {
-                bool result = _stockItemService.Delete(id);
+                bool result = _stockItemService.Delete(id, _whe.WebRootPath);
                 if (result)
                 {
                     TempData["Msg"] = "Data has been deleted successfully.";
@@ -103,5 +105,56 @@ namespace POS.Domain.Controllers
             }
             return RedirectToAction("List");
         }
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile image)
+        {            
+            if (image == null || image.Length == 0)
+                return BadRequest("No image uploaded.");
+
+            // Create path to wwwroot/images
+            var imagesPath = Path.Combine(_whe.WebRootPath, "images");
+            if (!Directory.Exists(imagesPath))
+                Directory.CreateDirectory(imagesPath);
+
+            // Generate a unique file name
+            var fileName = image.FileName;// Guid.NewGuid() + Path.GetExtension(image.FileName);
+            var filePath = Path.Combine(imagesPath, fileName);
+
+            //delete existing image files
+            var currFile = Path.GetFileNameWithoutExtension(fileName) + ".*";
+            var existFiles = Directory.GetFiles(imagesPath, currFile);
+
+            foreach (var file in existFiles)
+            {
+                if (System.IO.File.Exists(file))
+                {
+                    System.IO.File.Delete(file);
+                }
+            }
+
+            // Save the file
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {                
+                await image.CopyToAsync(stream);
+            }
+
+            // Return the image path relative to wwwroot
+            var relativePath = "/images/" + fileName;
+            return Ok(new { imagePath = relativePath });
+        }
+
+        public IActionResult CheckItem(string stkGrp, string stkItem)
+        {
+            StockItemViewModel chkItem = _stockItemService.GetAll()
+                .FirstOrDefault(s => s.StockGrp_Id == stkGrp && s.Code.ToLower() == stkItem.ToLower());
+
+            if (chkItem is not null)
+            {
+                return Json("Stock Item already exist!");
+            }
+
+            return Json(null);
+        }
+
     }
 }

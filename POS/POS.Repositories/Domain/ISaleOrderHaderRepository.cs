@@ -5,8 +5,5 @@ namespace POS.Repositories.Domain
 {
     public interface ISaleOrderHaderRepository:IBaseRepository<SaleOrderHaderEntity>
     {
-        bool AddAsync(SaleOrderHaderEntity entity);
-        bool UpdateAsync(SaleOrderHaderEntity entity);
-        bool DeleteAsync(SaleOrderHaderEntity entity);
     }
 }

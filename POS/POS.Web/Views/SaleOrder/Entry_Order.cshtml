@@ -1,52 +1,177 @@
 ﻿@model SaleOrderViewModel
-     
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+@*   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+<link href="~/css/saleorder.css" rel="stylesheet" />
 
-<h3>Order Entry</h3>
+<!-- Main Modal -->
+<div style="padding: 0px 10px 0px 10px;">    
+    <input type="hidden" name="Id" id="txtId" value="" />
+    <input type="hidden" name="STOCKGRP_ID" id="txtGrp" value="">
+    <input type="hidden" name="STOCKITEM_ID" id="txtItem" value="">        
+    
+    <div class="row" style="margin-bottom:5px;padding-left: 1px;">
+        <!-- Member Browse -->
+        <div class="col-md-3 col-sm-6 form-group" style="padding: 0px 2px 0px 0px;">
+            <div class="col-md-4 col-sm-6 div-text">
+                <div style="display: flex; align-items: center; gap: 1px;">
+                    <input type="text" class="form-control" id="txtMemberName" placeholder="Select Member" />
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#browseModal"><i class="fas fa-user"></i></button>
+                </div>
 
-<div class="row-side">
-    <div class="col-side">
-        <label for="CASHIER_ID" class="form-label">Cashier</label>
-        <input type="text" class="form-control" name="CASHIER_ID" id="txtCashier" value="1a26209d-68e0-4d78-9254-9cd93bb0e2ee" readonly>
-    </div>
-        <div class="col-side">
-        <label for="TRNS_DATE" class="form-label">Transaction Date</label>
-        <input type="text" class="form-control" name="TRNS_DATE" id="txtDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" readonly>
-    </div>
-    <div class="col-side">
+                <input type="hidden" name="MEMBER_ID" id="txtMemberId" />
 
-        <label for="IsMEMBER" class="form-label">Is Member?</label>
-        <select class="form-select" name="IsMEMBER" id="txtIsMEMBER">            
-            <option value="N" selected>No</option>
-            <option value="Y">Yes</option>
-        </select>        
-    </div>
-    <div class="col-side">
+                <!-- Browse Modal -->
+                
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">            
+            <input type="text" class="form-control search-input" name="StkItem_Id" id="SearchItems" placeholder="Search for an item" />
+        </div>
+        <div class="col-md-2 col-sm-6">           
+            <input class="form-check-input" type="radio" name="orderType" id="DineIn" value="Dine-In" checked>
+            <label class="form-check-label" for="DineIn">Dine-In</label>
 
-        <label for="IsMEMBER" class="form-label">Is Member Test?</label>
-        <select class="form-select" name="IsMEMBER" id="txtIsMEMBER">
-            <option value="N" selected>No</option>
-            <option value="Y">Yes</option>
-        </select>
-    </div>
+            <input class="form-check-input" type="radio" name="orderType" id="TakeAway" value="Takeaway">
+            <label class="form-check-label" for="TakeAway">Takeaway</label>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <button type="button" class="btn btn-primary" id="btnHold" style="font-size: 1rem !important;">
+                Payment
+            </button>
+        </div>
+    </div>    
+    
+    @* Category Row*@
+    <div class="row">
+        <div class="col-md-8 col-sm-12" style="padding-left: 1px;">
+            <div class="button-wrapper">
+                <input type="hidden" id="stkgrpId" value="x">
+                <button class="scroll-arrow left" onclick="scrollButtons(-200)"><i class="fas fa-chevron-left"></i></button>
+                <div class="button-container" id="buttonContainer">
+                    <button type="button" class="btn btn-menu" id="AllMenu" data-id="x" style="margin-left: 5px; background-color: #0d6efd;color: #f8f9fa;">All Menu</button>
+                    @foreach (var stkgrp in Model.StkGrpVM)
+                    {
+                        <button type="button" class="btn btn-menu" data-id="@stkgrp.Id">@stkgrp.Description</button>
+                    }
+                </div>                
+                <button class="scroll-arrow right" onclick="scrollButtons(200)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>            
+    </div> 
+    @* End Category Row*@
+
+    @* Item Row*@
+    <div class="row" style="margin-top:10px">
+        @* Item Image Grid*@
+        <div class="col-md-8 col-sm-6 grid-div">
+            <div class="grid">
+                @foreach(var item in Model.StkItemVM)
+                {
+                    @if (string.IsNullOrEmpty(item.Description))
+                    {
+                        item.Description = item.Code;
+                    }
+                    
+                    <div class="card" data-grpid="@item.StockGrp_Id" data-itemid="@item.Id" data-itemcode="@item.Description">
+                        <img src="@item.img_path" alt="@item.Description">
+                        <h3>@item.Description</h3>                        
+                        @if (item.Offer_price != 0)
+                        {
+                            <p>
+                                <span class="left" style="text-decoration: line-through;">$@item.Sell_Price</span>
+                                <span class="right" style="color:red;">$@item.Offer_price</span>
+                            </p>                            
+                        }else {
+                            <p>$@item.Sell_Price</p>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+        @* End Item Image Row*@
+
+        @* Current Order*@
+        <div class="col-md-4 col-sm-6 item-list" style="padding: 0px 5px 0px 0px;">
+            @* Items Table *@
+            <div class="table-div">               
+                <table id="item-table">
+                    <thead>
+                        <tr>
+                            <th style="display: none;">Line Id</th>
+                            <th style="display: none;">Grp</th>
+                            <th style="display: none;">Item</th>
+                            <th style="width: 100px; text-align:center;">Qty</th>
+                            <th style="width: 200px; text-align:center;">Descriptions</th>
+                            @* <th>Price</th>
+                            <th>Qty</th> *@
+                            <th style="width: 50px; text-align:center;">Discount</th>
+                            <th style="width: 80px; text-align:center;">Total</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic rows will be added here -->
+                    </tbody>
+                </table>
+            </div>  
+            
+            @* Total Amount *@
+            <div class="total-bottom-right">
+                <div style="position: absolute;left: 55%;">
+                    <div class="row" style="height: 23px;">
+                        <div class="col-md-12 form-group">
+                            <div class="div-label">
+                                <label for="Tot_Sub">Sub Total :</label>
+                            </div>
+                            <div class="div-text">
+                                <input type="text" class="form-control no-border" id="Tot_Sub" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="height: 23px;">
+                        <div class="col-md-12 form-group">
+                            <div class="div-label">
+                                <label for="Tot_Disc" style="font-size:13px !important; font-weight:normal !important;">Total Discount :</label>
+                            </div>
+                            <div class="div-text">
+                                <input type="text" class="form-control no-border" style="font-size:13px !important; font-weight:normal !important;" id="Tot_Disc" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="height: 23px;">
+                        <div class="col-md-12 form-group">
+                            <div class="div-label">
+                                <label for="Tot_Amt">Total Amount :</label>
+                            </div>
+                            <div class="div-text">
+                                <input type="text" class="form-control no-border" id="Tot_Amt" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-pay">
+                    <button type="button" class="btn btn-primary" id="btnPay" style="width: 430px; font-size: 1rem !important;" disabled>
+                        Payment
+                    </button>
+                </div>
+            </div>                                
+        </div>
+        @* End Current Order*@
+    </div> 
+    @*End Item Row*@
 </div>
 
-<!-- Member Browse -->
-<label for="MEMBER_ID" class="form-label">Member</label>
-<div style="width:49%;display: flex; align-items: center; gap: 8px;">    
-    <input type="text" class="form-control" id="txtMemberName" readonly />
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#browseModal">...</button>    
-</div>
-<input type="hidden" name="MEMBER_ID" id="txtMemberId" />
-
-<!-- Browse Modal -->
+<!-- Popup Modal - Member Browse -->
 <div class="modal fade" id="browseModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title">Select Product</h5></div>
+            <div class="modal-header"><h5 class="modal-title">Select Member</h5></div>
             <div class="modal-body">
-                <input type="text" id="searchBox" class="form-control mb-2" placeholder="Search products...">
+                <input type="text" id="searchBox" class="form-control mb-2" placeholder="Search member...">
                 <table class="table table-bordered" id="browseTable">
                     <thead>
                         <tr>
@@ -63,35 +188,394 @@
                                 <td>@member.Id</td>
                                 <td>@member.Name</td>
                                 <td>@member.MemberDate.ToString("yyyy-MM-dd HH:mm:ss tt")</td>
-                                <td><button class="btn btn-sm btn-success select-btn" data-id="@member.Id" data-name="@member.Name">Select</button></td>
+                                <td><button class="btn btn-sm btn-success btn-selectMember" data-id="@member.Id" data-name="@member.Name">Select</button></td>
                             </tr>
-                        }                                             
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
-<!--End of Member Browse -->
 
+<!-- Popup Modal - Payment -->
+<div id="popupModal" class="popupmodal">
+    <div class="popupmodal-content">
+        <span class="close">&times;</span>
+        <p style="color: #0d6efd;">Payments Method</p>
 
+        <div class="row">                   
+            <button type="button" class="btn btn-paymethod" data-id="CASH"><i class="fas fa-money-bill-wave"></i>&nbsp;&nbsp;Cash</button>
+        </div>
+
+        <div class="row">                 
+            <button type="button" class="btn btn-paymethod" data-id="CARD"><i class="fas fa-credit-card"></i>&nbsp;&nbsp;Credit Card</button>
+        </div>
+
+        <div class="row">
+            <input type="text" class="form-control" id="txtcardNo" value="" placeholder="enter card number"/>
+        </div>
+
+        <input type="hidden" id="txtPayMethod" value="x">
+
+        <div class="row" style="background-color: #e1edfe;padding: 10px;border-radius: 10px; margin: 10px 0px 5px 0px;">
+            <label for="Tot_Bal" style="font-size: 14px !important;text-align: center;">Total Balance</label>
+            <input type="text" class="form-control" style="border: 0px;font-size: 16px !important;font-weight: bold;background-color: #e1edfe;text-align: center;box-shadow: none;" id="Tot_Bal" value="0.00" readonly />
+        </div>
+
+        <div class="row" style="margin: 0px;padding: 0px;">
+            <button type="button" class="btn btn-primary" id="btnPlaceOrder" style="font-size: 1rem !important;">
+                Place Order
+            </button>
+        </div>
+    </div>
+</div>
 
 <script>
-    // Filter rows as you type
-    $('#searchBox').on('keyup', function () {
-      const value = $(this).val().toLowerCase();
-      $('#memberList tr').filter(function () {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-        //$(this).toggle($(this).find("td:eq(0)").text().toLowerCase().indexOf(value) > -1);
-      });
+    function scrollButtons(amount) {
+        const container = document.getElementById('buttonContainer');
+        container.scrollLeft += amount;
+    };
+
+    $(document).ready(function () {
+
+        // Filter item per Search Items...
+        $('#SearchItems').on('input', function () {
+            var value = $(this).val().toLowerCase();
+
+            $('.card').each(function () {
+                var stkgrpId = $("#stkgrpId").val();
+                var grpid = $(this).data('grpid').toLowerCase();
+                var itemcode = $(this).data('itemcode').toLowerCase();
+
+                if (value == '' || value == undefined || value == null){
+                    if (stkgrpId == 'x'){ // All Category
+                        $(this).show();
+                    }else{
+                        if (grpid == stkgrpId) $(this).show();
+                        else $(this).hide();
+                    }             
+                }
+                else{                
+                    if (stkgrpId == 'x'){ // All Category                    
+                        if (itemcode.includes(value)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }                    
+                    }
+                    else{ // with Category                    
+                        if (grpid == stkgrpId && itemcode.includes(value)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    }
+                }
+            });
+        });               
+
+        // Filter member
+        $('#searchBox').on('keyup', function () {
+            const value = $(this).val().toLowerCase();
+            $('#memberList tr').filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            //$(this).toggle($(this).find("td:eq(0)").text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+        // popupModal - Show on click
+        $('#btnPay').click(function () {            
+            $('#Tot_Bal').val($("#Tot_Amt").val());
+            $('#txtcardNo').hide();
+            $('#popupModal').fadeIn();
+        });
+
+        // popupModal - Close on click of close button
+        $('.close').click(function () {
+            $('#popupModal').fadeOut();
+        });
+
+        // popupModal - Optional: close popup when clicking outside the popupModal content
+        $(window).click(function (e) {
+            if ($(e.target).is('#popupModal')) {
+                $('#popupModal').fadeOut();
+            }
+        });
+        //End popupModal
+    });   
+
+    $(document).on('click', '.btn-paymethod', function (){
+
+        $('.btn-paymethod').css({
+            'border-color': ''
+        });
+
+        $(this).css({
+            'border-color': '#258cfb'
+        });
+
+        var PayM = $(this).data('id');
+        $('#txtPayMethod').val(PayM);
+
+        if (PayM == "CARD") $('#txtcardNo').show();
+        else $('#txtcardNo').hide();
     });
 
-    // Select button returns data to input
-    $(document).on('click', '.select-btn', function () {
+    $("#btnPlaceOrder").on("click", function () {        
+        var txtpMethod =$("#txtPayMethod").val();
+        var txtcNo =$("#txtcardNo").val();
+
+        if (txtpMethod =='x'){
+            alert("Please choose Payment type first!");
+            return;
+        }
+        else{
+            if (txtpMethod =='CARD' && txtcNo ==""){
+                alert("Please enter card number!");
+                return;
+            }
+
+            var txtId = $("#txtId").val();
+            var orderType = $('input[name="orderType"]:checked').val();
+            console.log("Paymnt Method : " + txtpMethod);
+
+            $.ajax({
+            url: '/SaleOrder/PlaceOrder',
+            type: 'POST',
+            data: { id: txtId, payMethod: txtpMethod, cardNo : txtcNo, ordrtype: orderType},
+            success: function (response) {
+                
+                if (response.message != '') alert('message : ' + response.message);
+                else alert('Payment Successful!');
+
+                $('#popupModal').fadeOut();
+                //ShowReceipt("");
+                ClearScreen();
+            },
+            error: function () {
+                alert('Error calling controller');
+            }
+            });
+        }
+    });
+    
+    // Filter item by Menu    
+    function setCardItem(thisMenu){
+        $('.btn-menu').css({
+            'background-color': '',
+            'color': ''
+        });
+
+        $(thisMenu).css({
+            'background-color': '#0d6efd',
+            'color': '#f8f9fa'
+        });
+
+        var searchItem = $("#SearchItems").val();
+        var stkGrp = $(thisMenu).data('id');
+
+        $('#stkgrpId').val(stkGrp);
+
+        $('.card').each(function () {
+            var grpid = $(this).data('grpid').toLowerCase();
+            var itemcode = $(this).data('itemcode').toLowerCase();
+
+            if (stkGrp == 'x'){ // All Category
+                if (searchItem != '' && searchItem != null){ // without Search Item Value
+                    if (itemcode.includes(searchItem)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                }else $(this).show();
+            }
+            else{ // with Category
+                if (searchItem != '' && searchItem != null){ // without Search Item Value
+                    if (itemcode.includes(searchItem) && grpid.includes(stkGrp)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                }else{ // with Search Item Value
+                    if (grpid.includes(stkGrp)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                }
+            }
+        });
+    };
+
+    $(document).on('click', '.btn-menu', function (){
+        setCardItem(this);                   
+    });
+
+    // Select Member returns data to input
+    $(document).on('click', '.btn-selectMember', function () {
       const name = $(this).data('name');
       const id = $(this).data('id');
       $('#txtMemberName').val(name);
       $('#txtMemberId').val(id);
       $('#browseModal').modal('hide'); // closes modal
     });
+
+    // Click on item image
+    $(document).on('click', '.card', function () {
+        var grp = $(this).data('grpid');
+        var item = $(this).data('itemid');
+        AddItem(0,grp,item);
+    });
+
+    function refreshData(retVal,retTot) {
+
+        if (retTot == null){
+            $("#btnPay").attr('disabled', true);
+            $("#Tot_Sub").val('0.00');
+            $("#Tot_Disc").val('0.00');
+            $("#Tot_Amt").val('0.00');
+            
+        }else{
+            $("#btnPay").attr('disabled', false);
+            $("#Tot_Sub").val('$ ' + retTot.suB_TOT.toFixed(2));
+            $("#Tot_Disc").val('$ ' + retTot.disC_TOT.toFixed(2));
+            $("#Tot_Amt").val('$ ' + retTot.alL_TOT.toFixed(2));
+        }
+        
+        const tbody = document.querySelector("#item-table tbody");
+        tbody.innerHTML = "";
+
+        const data = retVal;
+        if (data.length !== 0) {
+            // Render table rows dynamically
+            data.forEach(user => {
+                $("#txtId").val(data[0].id);                                                
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td style="display: none;">${user.linE_ID}</td>
+                    <td style="display: none;">${user.stockgrP_ID}</td>
+                    <td style="display: none;">${user.stockiteM_ID}</td>
+                    <td style="width: 100px;">
+                        <div class="counter">
+                            <button class="qty-btn" onclick="addQty(this)"><i class="fa fa-plus"></i></button>                        
+                            <input type="text" value="${user.quantity}" class="qty-input" readonly/>
+                            <button class="qty-btn" onclick="minusQty(this)"><i class="fa fa-minus"></i></button>
+                        </div>
+                    </td>
+                    <td style="width: 200px;">
+                        ${user.stkItemDesc} <br>
+                        <b>$ ${user.price.toFixed(2)} / Units </b>                        
+                    </td>                    
+                    <td style="width: 50px; text-align:right;">$ ${user.toT_DISC_AMT.toFixed(2)}</td>
+                    <td style="width: 80px; text-align:right;">$ ${user.neT_AMT.toFixed(2)}</td>
+
+                `;
+                tbody.appendChild(row);
+            });   
+            
+            // <td><input type="number" value="${user.quantity}" style="width: 50px;border-color:#2faf73;"></td>
+        }
+    };
+       
+    function addQty(btnAdd) { 
+        const row = $(btnAdd).closest('tr');
+        var line = row.find('td:eq(0)').text();
+        var grp = row.find('td:eq(1)').text();
+        var item = row.find('td:eq(2)').text();
+
+        AddItem(line,grp,item);
+    };
+
+    function minusQty(btnMinus){
+        const row = $(btnMinus).closest('tr');
+        var line = row.find('td:eq(0)').text();
+        var grp = row.find('td:eq(1)').text();
+        var item = row.find('td:eq(2)').text();
+
+        ReduceItem(line,grp,item);
+    };
+
+    function AddItem(line,grp,item){
+        var txtId = $("#txtId").val();
+        var MemberId = $("#txtMemberId").val();        
+        var orderType = $('input[name="orderType"]:checked').val();
+        var itemRmk = '';
+
+        $("#txtGrp").val(grp);
+        $("#txtItem").val(item);
+
+        $.ajax({
+        url: '/SaleOrder/AddItem',
+        type: 'POST',
+        data: { id: txtId,lineId: line, GrpId: grp, ItemId: item, memId: MemberId,ordrType: orderType, rmk: itemRmk},
+        success: function (response) {
+            if (response.message != '') alert('message : ' + response.message);
+
+            refreshData(response.resVal,response.resTot.result);
+        },
+        error: function () {
+            alert('Error calling controller');
+        }
+        });
+    };
+
+    function ReduceItem(line,grp,item){
+        var txtId = $("#txtId").val();        
+
+        $("#txtGrp").val(grp);
+        $("#txtItem").val(item);
+
+        $.ajax({
+        url: '/SaleOrder/ReduceItem',
+        type: 'POST',
+        data: { id: txtId,lineId: line, GrpId: grp, ItemId: item},
+        success: function (response) {
+            if (response.message != '') alert('message : ' + response.message);
+
+            refreshData(response.resVal,response.resTot.result);
+        },
+        error: function () {
+            alert('Error calling controller');
+        }
+        });
+    };
+
+    function ClearScreen(){        
+
+        $('#txtId').val('');
+        $('#txtGrp').val('');
+        $('#txtItem').val('');
+        $('#txtMemberId').val('');
+        $('#txtMemberName').val('');
+        $('#SearchItems').val('');
+        //--------------------------
+        $('#DineIn').prop('checked', true);
+        $('#TakeAway').prop('checked', false);
+        //--------------------------
+        const container = document.getElementById('buttonContainer');
+        container.scrollLeft = 0;
+        $('#stkgrpId').val('x');
+        setCardItem(AllMenu);
+
+        $('#Tot_Sub').val('0.00');
+        $('#Tot_Disc').val('0.00');
+        $('#Tot_Amt').val('0.00');
+        //--------------------------
+        const tbody = document.querySelector("#item-table tbody");
+        tbody.innerHTML = "";
+        $("#btnPay").attr('disabled', true);
+        //--------------------------
+        $('#txtPayMethod').val('x');
+        $('.btn-paymethod').css({
+            'border-color': ''
+        });
+        $('#txtcardNo').hide();
+
+        $('#Tot_Bal').val('0.00');
+    };
+
 </script>
+
+

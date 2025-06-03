@@ -26,7 +26,7 @@ namespace POS.Services
         public bool Create(StockItemViewModel stockItemVM)
         {
             try
-            {
+            {                
                 StockItemEntity stockItemEntity = new StockItemEntity()
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -36,6 +36,7 @@ namespace POS.Services
                     Sell_Price = stockItemVM.Sell_Price,
                     Offer_price = stockItemVM.Offer_price,
                     BarCode = stockItemVM.BarCode,
+                    img_path = stockItemVM.img_path,
                     Disc_Type = stockItemVM.Disc_Type,
                     Disc_Amount = stockItemVM.Disc_Amount,
                     Disc_Percent = stockItemVM.Disc_Percent,
@@ -49,7 +50,8 @@ namespace POS.Services
                 };
                 _unitOfWork.StockItemRepository.Create(stockItemEntity);
                 _unitOfWork.Commit();
-                return true;
+
+                return true;                                  
             }
             catch (Exception)
             {
@@ -57,7 +59,7 @@ namespace POS.Services
                 return false;
             }
         }
-        public bool Delete(string id)
+        public bool Delete(string id, string WebRootPath)
         {
             try
             {
@@ -67,6 +69,18 @@ namespace POS.Services
                     stockItemEntity.IsActive = false;
                     _unitOfWork.StockItemRepository.Delete(stockItemEntity);
                     _unitOfWork.Commit();
+
+                    // Delete image file
+                    if (!string.IsNullOrEmpty(stockItemEntity.img_path))
+                    {
+                        string imagePath = WebRootPath + stockItemEntity.img_path;
+
+                        if (System.IO.File.Exists(imagePath))
+                        {
+                            System.IO.File.Delete(imagePath);
+                        }
+                    }
+
                 }
                 return true;
             }
@@ -92,6 +106,8 @@ namespace POS.Services
                         Sell_Price = s.Sell_Price,
                         Offer_price = s.Offer_price,
                         BarCode = s.BarCode,
+                        img_path = string.IsNullOrEmpty(s.img_path)? "/images/Default_Item.jpg" : s.img_path,
+                        //img_path = s.img_path,
                         Disc_Type = s.Disc_Type,
                         Disc_Amount = s.Disc_Amount,
                         Disc_Percent = s.Disc_Percent,
@@ -124,6 +140,7 @@ namespace POS.Services
                         Sell_Price = s.Sell_Price,
                         Offer_price = s.Offer_price,
                         BarCode = s.BarCode,
+                        img_path = string.IsNullOrEmpty(s.img_path) ? "/images/Default_Item.jpg" : s.img_path,
                         Disc_Type = s.Disc_Type,
                         Disc_Amount = s.Disc_Amount,
                         Disc_Percent = s.Disc_Percent,
@@ -142,14 +159,15 @@ namespace POS.Services
         public bool Update(StockItemViewModel stockItemVM)
         {
             try
-            {
+            {              
                 StockItemEntity stockItemEntity = _unitOfWork.StockItemRepository.GetAll(w => w.IsActive && w.Id == stockItemVM.Id).FirstOrDefault();
                 if (stockItemEntity is not null)
                 {
-                    stockItemEntity.Sell_Price = stockItemVM.Sell_Price;                    
-                    stockItemEntity.Offer_price = stockItemVM.Offer_price;                    
-                    stockItemEntity.Description = stockItemVM.Description;                    
+                    stockItemEntity.Sell_Price = stockItemVM.Sell_Price;
+                    stockItemEntity.Offer_price = stockItemVM.Offer_price;
+                    stockItemEntity.Description = stockItemVM.Description;
                     stockItemEntity.BarCode = stockItemVM.BarCode;
+                    stockItemEntity.img_path = stockItemVM.img_path;
                     stockItemEntity.Disc_Type = stockItemVM.Disc_Type;
                     stockItemEntity.Disc_Amount = stockItemVM.Disc_Amount;
                     stockItemEntity.Disc_Percent = stockItemVM.Disc_Percent;
@@ -164,7 +182,7 @@ namespace POS.Services
                     _unitOfWork.StockItemRepository.Update(stockItemEntity);
                     _unitOfWork.Commit();
                 }
-                return true;
+                return true;                
             }
             catch (Exception)
             {

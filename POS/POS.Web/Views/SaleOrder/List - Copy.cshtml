@@ -1,0 +1,443 @@
+﻿@* <html>
+    <head>
+        <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            width: 60%;
+            max-width: 500px;
+            border-radius: 8px;
+            position: relative;
+            text-align: center;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+            .close:hover {
+                color: #000;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Image Div -->
+        <div id="imageDiv" style="width:200px;cursor:pointer;">
+            <img src="your-image.jpg" alt="Thumbnail" width="200" />
+        </div>
+
+        <!-- Popup Modal -->
+        <div id="popupModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>This is the popup content!</p>
+                <img src="your-image.jpg" alt="Full Image" style="width: 100%;" />
+            </div>
+        </div>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+          // Show modal on click
+          $('#imageDiv').click(function () {
+            $('#popupModal').fadeIn();
+          });
+
+          // Close modal on click of close button
+          $('.close').click(function () {
+            $('#popupModal').fadeOut();
+          });
+
+          // Optional: close modal when clicking outside the modal content
+          $(window).click(function (e) {
+            if ($(e.target).is('#popupModal')) {
+              $('#popupModal').fadeOut();
+            }
+          });
+        });
+    </script>
+    </body>
+</html> *@
+
+
+@model SaleOrderViewModel
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+@*   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+<link href="~/css/saleorder.css" rel="stylesheet" />
+
+<div style="padding: 0px 10px 0px 10px;">
+    <input type="hidden" name="Id" id="txtId" value="" />
+    <input type="hidden" name="STOCKGRP_ID" id="txtGrp" value="">
+    <input type="hidden" name="STOCKITEM_ID" id="txtItem" value="">
+
+    @* Category Row*@
+    <div class="row">
+        <div class="col-md-8 col-sm-6 form-group">
+            <div class="col-md-3 col-sm-6 div-label">
+                <label for="StkGrp_Id" class="form-label">Category :</label>
+            </div>
+            <div class="col-md-4 col-sm-6 div-text">
+                <select class="form-select" name="StkGrp_Id" id="stkgrpId">
+                    <option selected value="x">[All Items]</option>
+                    @foreach (var stkgrp in Model.StkGrpVM)
+                    {
+                        <option value="@stkgrp.Id">@(stkgrp.Code + "-" + stkgrp.Description)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <input type="text" class="form-control" name="StkItem_Id" id="SearchItems" placeholder="Search for an item" />
+            </div>
+        </div>
+        <!-- Member Browse -->
+        <div class="col-md-2 col-sm-6 form-group" style="padding: 0px 2px 0px 0px;">
+            <div class="col-md-4 col-sm-6 div-text">
+                <div style="display: flex; align-items: center; gap: 1px;">
+                    <input type="text" class="form-control" id="txtMemberName" placeholder="Select Member" />
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#browseModal"><i class="fas fa-user"></i></button>
+                </div>
+
+                <input type="hidden" name="MEMBER_ID" id="txtMemberId" />
+
+                <!-- Browse Modal -->
+                <div class="modal fade" id="browseModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header"><h5 class="modal-title">Select Product</h5></div>
+                            <div class="modal-body">
+                                <input type="text" id="searchBox" class="form-control mb-2" placeholder="Search products...">
+                                <table class="table table-bordered" id="browseTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Name</th>
+                                            <th>Member Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="memberList">
+                                        @foreach (var member in Model.MemberVM)
+                                        {
+                                            <tr>
+                                                <td>@member.Id</td>
+                                                <td>@member.Name</td>
+                                                <td>@member.MemberDate.ToString("yyyy-MM-dd HH:mm:ss tt")</td>
+                                                <td><button class="btn btn-sm btn-success select-btn" data-id="@member.Id" data-name="@member.Name">Select</button></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> @* End Category Row*@
+
+    @* Item Image Row*@
+    <div class="row" style="margin-top:10px">
+        <div class="col-md-8 col-sm-6 grid-div">
+            <div class="grid">
+                @foreach (var item in Model.StkItemVM)
+                {
+                    <div class="card" data-grpid="@item.StockGrp_Id" data-itemid="@item.Id" data-itemcode="@item.Description">
+                        <img src="@item.img_path" alt="@item.Description">
+                        <h3>@item.Description</h3>
+                        <p>@item.Sell_Price</p>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 item-list" style="padding: 0px 5px 0px 0px;">
+            <div class="table-div">
+                <table id="item-table">
+                    <thead>
+                        <tr>
+                            <th style="display: none;">Line Id</th>
+                            <th style="display: none;">Grp</th>
+                            <th style="display: none;">Item</th>
+                            <th style="width: 100px; text-align:center;">Qty</th>
+                            <th style="width: 200px; text-align:center;">Items</th>
+                            @* <th>Price</th>
+                            <th>Qty</th> *@
+                            <th style="width: 50px; text-align:center;">Discount</th>
+                            <th style="width: 80px; text-align:center;">Total</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic rows will be added here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="total-bottom-right">
+                <div style="position: absolute;left: 55%;">
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <div class="div-label">
+                                <label for="Tot_Sub" class="form-label">Sub Total :</label>
+                            </div>
+                            <div class="div-text">
+                                <input type="text" class="form-control no-border" id="Tot_Sub" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <div class="div-label">
+                                <label for="Tot_Disc" class="form-label">Total Discount :</label>
+                            </div>
+                            <div class="div-text">
+                                <input type="text" class="form-control no-border" id="Tot_Disc" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <div class="div-label">
+                                <label for="Tot_Amt" class="form-label">Total Amount :</label>
+                            </div>
+                            <div class="div-text">
+                                <input type="text" class="form-control no-border" id="Tot_Amt" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> @* End Item Image Row*@
+
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        // Filter item per Search Items...
+        $('#SearchItems').on('input', function () {
+            var value = $(this).val().toLowerCase();
+
+            $('.card').each(function () {
+            var stkgrpId = $("#stkgrpId").val();
+            var grpid = $(this).data('grpid').toLowerCase();
+            var itemcode = $(this).data('itemcode').toLowerCase();
+
+            if (stkgrpId == 'x'){ // All Category
+                if (itemcode.includes(value)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            }
+            else{ // with Category
+                if (grpid == stkgrpId && itemcode.includes(value)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            }
+            });
+        });
+
+        // Filter item per Category
+        $('#stkgrpId').on('change', function () {
+            var searchItem = $("#SearchItems").val();
+            var stkGrp = $(this).val().toLowerCase();
+
+            $('.card').each(function () {
+            var grpid = $(this).data('grpid').toLowerCase();
+            var itemcode = $(this).data('itemcode').toLowerCase();
+
+            if (stkGrp == 'x'){ // All Category
+                if (searchItem != '' && searchItem != null){ // without Search Item Value
+                    if (itemcode.includes(searchItem)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                }else $(this).show();
+            }
+            else{ // with Category
+                if (searchItem != '' && searchItem != null){ // without Search Item Value
+                    if (itemcode.includes(searchItem) && grpid.includes(stkGrp)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                }else{ // with Search Item Value
+                    if (grpid.includes(stkGrp)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                }
+            }
+            });
+        });
+        //--------------------------
+
+        // Filter member
+        $('#searchBox').on('keyup', function () {
+            const value = $(this).val().toLowerCase();
+            $('#memberList tr').filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            //$(this).toggle($(this).find("td:eq(0)").text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+    });
+
+    // Select Member returns data to input
+    $(document).on('click', '.select-btn', function () {
+      const name = $(this).data('name');
+      const id = $(this).data('id');
+      $('#txtMemberName').val(name);
+      $('#txtMemberId').val(id);
+      $('#browseModal').modal('hide'); // closes modal
+    });
+
+    // Click on item image
+    $(document).on('click', '.card', function () {
+        var grp = $(this).data('grpid');
+        var item = $(this).data('itemid');
+        AddItem(0,grp,item);
+    });
+
+    function refreshData(retVal,retTot) {
+
+        if (retTot == null){
+            $("#Tot_Sub").val('0.00');
+            $("#Tot_Disc").val('0.00');
+            $("#Tot_Amt").val('0.00');
+
+        }else{
+            $("#Tot_Sub").val('$ ' + retTot.suB_TOT.toFixed(2));
+            $("#Tot_Disc").val('$ ' + retTot.disC_TOT.toFixed(2));
+            $("#Tot_Amt").val('$ ' + retTot.alL_TOT.toFixed(2));
+        }
+
+        const tbody = document.querySelector("#item-table tbody");
+        tbody.innerHTML = "";
+
+        const data = retVal;
+        if (data.length !== 0) {
+            // Render table rows dynamically
+            data.forEach(user => {
+                $("#txtId").val(data[0].id);
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td style="display: none;">${user.linE_ID}</td>
+                    <td style="display: none;">${user.stockgrP_ID}</td>
+                    <td style="display: none;">${user.stockiteM_ID}</td>
+                    <td style="width: 100px;">
+                        <div class="counter">
+                            <button class="qty-btn" onclick="addQty(this)"><i class="fa fa-plus"></i></button>
+                            <input type="text" value="${user.quantity}" class="qty-input" readonly/>
+                            <button class="qty-btn" onclick="minusQty(this)"><i class="fa fa-minus"></i></button>
+                        </div>
+                    </td>
+                    <td style="width: 200px;">
+                        ${user.stkItemDesc} <br>
+                        <b>$ ${user.price.toFixed(2)} / Units </b>
+                    </td>
+                    <td style="width: 50px; text-align:right;">$ ${user.toT_DISC_AMT.toFixed(2)}</td>
+                    <td style="width: 80px; text-align:right;">$ ${user.neT_AMT.toFixed(2)}</td>
+
+                `;
+                tbody.appendChild(row);
+            });
+
+            // <td><input type="number" value="${user.quantity}" style="width: 50px;border-color:#2faf73;"></td>
+        }
+    };
+
+    function addQty(btnAdd) {
+        const row = $(btnAdd).closest('tr');
+        var line = row.find('td:eq(0)').text();
+        var grp = row.find('td:eq(1)').text();
+        var item = row.find('td:eq(2)').text();
+
+        AddItem(line,grp,item);
+    };
+
+    function minusQty(btnMinus){
+        const row = $(btnMinus).closest('tr');
+        var line = row.find('td:eq(0)').text();
+        var grp = row.find('td:eq(1)').text();
+        var item = row.find('td:eq(2)').text();
+
+        ReduceItem(line,grp,item);
+    };
+
+    function AddItem(line,grp,item){
+        var txtId = $("#txtId").val();
+        var MemberId = $("#txtMemberId").val();
+        var itemRmk = '';
+
+        $("#txtGrp").val(grp);
+        $("#txtItem").val(item);
+
+        $.ajax({
+        url: '/SaleOrder/AddItem',
+        type: 'POST',
+        data: { id: txtId,lineId: line, GrpId: grp, ItemId: item, memId: MemberId, rmk: itemRmk},
+        success: function (response) {
+            if (response.message != '') alert('message : ' + response.message);
+
+            refreshData(response.resVal,response.resTot.result);
+        },
+        error: function () {
+            alert('Error calling controller');
+        }
+        });
+    };
+
+    function ReduceItem(line,grp,item){
+        var txtId = $("#txtId").val();
+
+        $("#txtGrp").val(grp);
+        $("#txtItem").val(item);
+
+        $.ajax({
+        url: '/SaleOrder/ReduceItem',
+        type: 'POST',
+        data: { id: txtId,lineId: line, GrpId: grp, ItemId: item},
+        success: function (response) {
+            if (response.message != '') alert('message : ' + response.message);
+
+            refreshData(response.resVal,response.resTot.result);
+        },
+        error: function () {
+            alert('Error calling controller');
+        }
+        });
+    };
+
+</script>
+
+

@@ -90,7 +90,7 @@ td[contenteditable="true"] {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
 }
 
 .col-side {
@@ -100,4 +100,45 @@ td[contenteditable="true"] {
 
 .row-bottom {    
     margin-bottom: 10px;
+}
+
+.footer {
+    line-height: 40px !important;
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    background-color: #fff;
+    color: white;
+    text-align: center;
+    line-height: 60px;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+}
+
+/* Hide native file input */
+#imageUpload {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+/* Style the custom button */
+#customUploadBtn {
+    padding: 2px 7px;
+    background-color: #f0f1f1;
+    cursor: pointer;
+    border-radius: 3px;
+    display: inline-block;
+    border: initial;
+    border: 1px solid #6c757d;
+}
+
+#customUploadBtn:hover {
+    box-shadow: 0 2px 5px rgb(64, 67, 70) !important;
+}
+
+.custom-disable {
+    border-color: #ced4da !important;
+    color: #777777;
 }

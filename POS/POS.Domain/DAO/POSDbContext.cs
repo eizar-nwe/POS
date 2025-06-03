@@ -22,6 +22,7 @@ namespace POS.Domain.DAO
         public DbSet<MemberDiscountEntity> MemberDisc { get; set; }
         public DbSet<SaleOrderHaderEntity> SaleHader { get; set; }
         public DbSet<SaleOrderDetailEntity> SaleDetail { get; set; }
+        public DbSet<PaymentEntity> Payments { get; set; }
         
         //for composit primary key
         protected override void OnModelCreating(ModelBuilder modelBuilder)

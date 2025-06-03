@@ -1,7 +1,8 @@
 ﻿@model StockItemViewModel
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/js/common.js"></script>
+<script src="~/js/Common.js"></script>
+<script src="~/js/stockitem.js"></script>
 
 <h3>Stock Item Entry Form</h3>
 <form action="/StockItem/Entry" method="post">
@@ -16,12 +17,29 @@
                     <option value="@stkgrp.Id">@stkgrp.Code</option>
                 }
             </select>
-        </div>
 
-        <div class="col-side">
             <label for="Code" class="form-label">Stock Code</label>
-            <input type="text" class="form-control" name="Code" id="txtCode" placeholder="enter Stock Code here." maxlength="20" required>
-        </div>        
+            <input type="text" class="form-control" name="Code" id="txtCode" placeholder="enter Stock Code here." maxlength="20" required/>
+        </div>  
+        
+        <div class="col-side">
+            <div style="display: flex;align-items: end;gap: 20px;">
+                <div id="previewDiv">
+                    <img id="uploadedImage"
+                         src="/images/Default_Item.jpg"
+                         alt="Uploaded Image"
+                         style="max-width:140px; border:1px solid #ccc; padding:5px;" />
+                </div>
+                <div>
+                    @* <input type="file" id="imageUpload" accept="image/*" /> *@
+                    <label for="imageUpload" id="customUploadBtn">Choose File</label>
+                    <span id="fileNameDisplay" style="margin-left: 5px;">No file chosen</span>
+
+                    <input type="file" id="imageUpload" />                    
+                </div>
+                <input type="hidden" name="img_path" id="txtimgPath" value="" />
+            </div>
+        </div>
     </div>
 
     <div class="row-side">
@@ -38,25 +56,14 @@
     <div class="row-side">
         <div class="col-side">
             <label for="Sell_Price" class="form-label">Selling Price</label>
-            <input type="number" class="form-control" name="Sell_Price" id="sellPrice" value="0">
+            <input type="number" step="any" class="form-control" name="Sell_Price" id="sellPrice" value="0">
         </div>
         <div class="col-side">
             <label for="Offer_price" class="form-label">Offer Price</label>
-            <input type="number" class="form-control" name="Offer_price" id="txtOffPrice" value="0" readonly>
+            <input type="number" step="any" class="form-control" name="Offer_price" id="txtOffPrice" value="0" readonly>
         </div>
     </div>
 
-    @* <div class="col-side">
-        <label for="Disc_Type" class="form-label">Discount Type</label>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="Disc_Type" id="radioAmt" value="A" onclick="DiscTypeOnChange()" checked>
-            <label class="form-check-label" for="radioAmt">Amount</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="Disc_Type" id="radioPer" value="P" onclick="DiscTypeOnChange()">
-            <label class="form-check-label" for="radioPer">Percent</label>
-        </div>
-    </div> *@
     <div class="row-side">
         <div class="col-side">
             <label for="Disc_Type" class="form-label">Discount Type</label>
@@ -71,11 +78,11 @@
     <div class="row-side">
         <div class="col-side">
             <label for="Disc_Amount" class="form-label">Discount Amount</label>
-            <input type="number" class="form-control" name="Disc_Amount" id="DiscAmt" value="0" readonly>
+            <input type="number" step="any" class="form-control" name="Disc_Amount" id="DiscAmt" value="0" readonly>
         </div>
         <div class="col-side">
             <label for="Disc_Percent" class="form-label">Discount Percent</label>
-            <input type="number" class="form-control" name="Disc_Percent" id="DiscPer" value="0" readonly>
+            <input type="number" step="any" class="form-control" name="Disc_Percent" id="DiscPer" value="0" readonly>
         </div>
     </div>
 
@@ -104,27 +111,26 @@
 <script>
     $(document).ready(function (){
         $('#btnEntry').attr('disabled',true);
-
-        function toogleEntryButton(){
-            if ($('#txtCode').val().length != 0 && $('#stkgrpId').val() != 'x'){
-                $('#btnEntry').attr('disabled',false);
-            }
-            else {
-                $('#btnEntry').attr('disabled',true);
-            }
-        };
-
-        $('#txtCode').keyup(function(){
-            toogleEntryButton();
-        });
-
-        $('#stkgrpId').on('change', function () {
-            toogleEntryButton();
-        });
+        
+        $('#imageUpload').attr('disabled',true);
+        $('#customUploadBtn').attr('disabled',true);
+        $('#customUploadBtn').addClass('custom-disable');
 
         $('#DiscAmt, #DiscPer, #sellPrice').on('change', function () {
             calculateOfferPrice();
         });
+    });
+
+    $('#stkgrpId,#txtCode').on('change', function () {
+        CheckItem();
+    });
+
+    $('#imageUpload').on('change', function () {
+
+        var originalFile = this.files[0];
+        if (!originalFile) return;
+
+        imageUpload(originalFile);
     });
 
 </script>

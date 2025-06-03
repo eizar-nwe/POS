@@ -2,28 +2,47 @@
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/js/Common.js"></script>
+<script src="~/js/stockitem.js"></script>
 
 <h3>Stock Item Edit Form</h3>
 <form action="/StockItem/Update" method="post">
     <input type="hidden" name="Id" value="@Model.Id" />
 
     <div class="row-side">
-        <div class="col-side">        
+        <div class="col-side">
             <label for="StockGrp_Id" class="form-label">Stock Group</label>
-            <select class="form-select" name="StockGrp_Id" disabled>
+            <select class="form-select" name="StockGrp_Id" id="stkgrpId" disabled>
                 @foreach (var stkgrp in Model.StockGrpVMs)
                 {
                     @if (stkgrp.Id == Model.StockGrp_Id)
                     {
                         <option value="@stkgrp.Id" selected>@stkgrp.Code</option>
                         break;
-                    }               
+                    }
                 }
             </select>
-        </div>
-        <div class="col-side">
+
             <label for="Code" class="form-label">Stock Code</label>
-            <input type="text" class="form-control" name="Code" id="txtCode" value="@Model.Code" readonly>
+            <input type="text" class="form-control" name="Code" id="txtCode" value="@Model.Code" readonly/>
+        </div>
+
+        <div class="col-side">
+            <div style="display: flex;align-items: end;gap: 20px;">
+                <div id="previewDiv">
+                    <img id="uploadedImage"
+                         src=""
+                         alt="Uploaded Image"
+                         style="max-width:140px; border:1px solid #ccc; padding:5px;" />
+                </div>
+                <div>
+                    @* <input type="file" id="imageUpload" accept="image/*" /> *@
+                    <label for="imageUpload" id="customUploadBtn">Choose File</label>
+                    <span id="fileNameDisplay" style="margin-left: 5px;">@(Model.img_path.Contains("Default_Item.jpg") ? "No file chosen": Model.img_path)</span>
+
+                    <input type="file" id="imageUpload" />
+                </div>
+                <input type="hidden" name="img_path" id="txtimgPath" value="" />
+            </div>
         </div>
     </div>
 
@@ -40,24 +59,13 @@
     <div class="row-side">
         <div class="col-side">
             <label for="Sell_Price" class="form-label">Selling Price</label>
-            <input type="number" class="form-control" name="Sell_Price" id="sellPrice" value="@Model.Sell_Price">
+            <input type="number" step="any" class="form-control" name="Sell_Price" id="sellPrice" value="@Model.Sell_Price">
         </div>
         <div class="col-side">
             <label for="Offer_price" class="form-label">Offer Price</label>
-            <input type="number" class="form-control" name="Offer_price" id="txtOffPrice" value="@Model.Offer_price" readonly>
+            <input type="number" step="any" class="form-control" name="Offer_price" id="txtOffPrice" value="@Model.Offer_price" readonly>
         </div>
     </div>
-@*     <div class="col-side">
-        <label for="Disc_Type" class="form-label">Discount Type</label>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="Disc_Type" id="radioAmt" value="A" @(Model.Disc_Type == "A" ? "checked" : "null") onclick="DiscTypeOnChange()">
-            <label class="form-check-label" for="radioAmt">Amount</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="Disc_Type" id="radioPer" value="P" @(Model.Disc_Type == "P" ? "checked" : "null") onclick="DiscTypeOnChange()">
-            <label class="form-check-label" for="radioPer">Percent</label>
-        </div>
-    </div> *@
 
     <div class="row-side">
         <div class="col-side">
@@ -74,11 +82,11 @@
     <div class="row-side">
         <div class="col-side">
             <label for="Disc_Amount" class="form-label">Discount Amount</label>
-            <input type="number" class="form-control" name="Disc_Amount" id="DiscAmt" value="@Model.Disc_Amount" @(Model.Disc_Type == "A" ? "null" : "readonly")>
+            <input type="number" step="any" class="form-control" name="Disc_Amount" id="DiscAmt" value="@Model.Disc_Amount" @(Model.Disc_Type == "A" ? "null" : "readonly")>
         </div>
         <div class="col-side">
             <label for="Disc_Percent" class="form-label">Discount Percent</label>
-            <input type="number" class="form-control" name="Disc_Percent" id="DiscPer" value="@Model.Disc_Percent" @(Model.Disc_Type == "P" ? "null" : "readonly")>
+            <input type="number" step="any" class="form-control" name="Disc_Percent" id="DiscPer" value="@Model.Disc_Percent" @(Model.Disc_Type == "P" ? "null" : "readonly")>
         </div>
     </div>
     <div class="row-side">
@@ -110,9 +118,19 @@
         var selectedValue = "@Model.Disc_Type"; // Replace with your dynamic value
         $('#DiscType').val(selectedValue);
 
+        // $('#uploadedImage').attr('src', "@Model.img_path");
+        $('#uploadedImage').attr('src', "@Model.img_path" + '?t=' + new Date().getTime());
+
         $('#DiscAmt, #DiscPer, #sellPrice').on('change', function () {
             calculateOfferPrice();
         });
     });
 
+    $('#imageUpload').on('change', function () {
+
+        var originalFile = this.files[0];
+        if (!originalFile) return;
+
+        imageUpload(originalFile);
+    });
 </script>

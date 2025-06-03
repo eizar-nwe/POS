@@ -13,6 +13,6 @@ namespace POS.Services
         IEnumerable<StockItemViewModel> GetAll();
         StockItemViewModel GetByID(string id);
         bool Update(StockItemViewModel stockItemVM);
-        bool Delete(string id);
+        bool Delete(string id, string WebRootPath);
     }
 }

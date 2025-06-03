@@ -8,6 +8,7 @@
         public decimal? Sell_Price { get; set; }
         public decimal? Offer_price { get; set; }
         public string? BarCode { get; set; }
+        public string? img_path { get; set; }
         public string? Disc_Type { get; set; }
         public decimal? Disc_Amount { get; set; }
         public decimal? Disc_Percent { get; set; }

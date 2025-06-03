@@ -74,11 +74,11 @@
     <div class="row-side">
         <div class="col-side">
             <label for="ORIGIN_PRICE" class="form-label">Original Price</label>
-            <input type="number" class="form-control" name="ORIGIN_PRICE" id="txtOrgPrice" value="@Model.ORIGIN_PRICE" readonly>
+            <input type="number" step="any" class="form-control" name="ORIGIN_PRICE" id="txtOrgPrice" value="@Model.ORIGIN_PRICE" readonly>
         </div>
         <div class="col-side">
             <label for="OFFER_PRICE" class="form-label">Offer Price</label>
-            <input type="number" class="form-control" name="OFFER_PRICE" id="txtOffPrice" value="@Model.OFFER_PRICE" readonly>
+            <input type="number" step="any" class="form-control" name="OFFER_PRICE" id="txtOffPrice" value="@Model.OFFER_PRICE" readonly>
         </div>
     </div>
 
@@ -96,11 +96,11 @@
     <div class="row-side">
         <div class="col-side">
             <label for="Disc_Amount" class="form-label">Discount Amount</label>
-            <input type="number" class="form-control" name="Disc_Amount" id="DiscAmt" value="@Model.Disc_Amount" @(Model.Disc_Type == "A" ? "null" : "readonly")>
+            <input type="number" step="any" class="form-control" name="Disc_Amount" id="DiscAmt" value="@Model.Disc_Amount" @(Model.Disc_Type == "A" ? "null" : "readonly")>
         </div>
         <div class="col-side">
             <label for="Disc_Percent" class="form-label">Discount Percent</label>
-            <input type="number" class="form-control" name="Disc_Percent" id="DiscPer" value="@Model.Disc_Percent" @(Model.Disc_Type == "P" ? "null" : "readonly")>
+            <input type="number" step="any" class="form-control" name="Disc_Percent" id="DiscPer" value="@Model.Disc_Percent" @(Model.Disc_Type == "P" ? "null" : "readonly")>
         </div>
     </div>
 

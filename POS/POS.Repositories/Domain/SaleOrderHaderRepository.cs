@@ -12,20 +12,5 @@ namespace POS.Repositories.Domain
         {
             this._dbContext = dbContext;
         }
-
-        public bool AddAsync(SaleOrderHaderEntity entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool DeleteAsync(SaleOrderHaderEntity entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool UpdateAsync(SaleOrderHaderEntity entity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

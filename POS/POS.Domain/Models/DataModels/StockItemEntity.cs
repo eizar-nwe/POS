@@ -14,6 +14,7 @@ namespace POS.Domain.Models.DataModels
         public decimal? Offer_price { get; set; }
         [MaxLength(20)]
         public string? BarCode { get; set; }
+        public string? img_path { get; set; }
         [MaxLength(1)]
         public string? Disc_Type { get; set; }
         public decimal? Disc_Amount { get; set; }
